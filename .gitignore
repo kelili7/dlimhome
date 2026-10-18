@@ -1,0 +1,26 @@
+# Python-generated files
+.DS_Store
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+*.sqlite3
+backend/staticfiles/
+
+# Node / Vue generated files
+node_modules/
+frontend/dist/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Browser test output
+frontend/test-results/
+frontend/playwright-report/

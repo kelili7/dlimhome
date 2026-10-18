@@ -1,0 +1,22 @@
+[project]
+name = "dlim-home-web"
+version = "0.1.0"
+description = "DLIM corporate website with a Django API/admin backend and Vue frontend"
+readme = "README.md"
+authors = [
+    { name = "Ethan7", email = "kechishuo7@163.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.1.2",
+    "django-cors-headers>=4.9.0",
+    "django-simpleui>=2026.1.13",
+    "djangorestframework>=3.18.3",
+]
+
+[project.scripts]
+dlim-home-web = "dlim_home_web:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"

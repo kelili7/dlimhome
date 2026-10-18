@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">DLIM Home fourfold DLIM monogram concept symbol</title>
+  <g fill="#111111">
+    <path fill-rule="evenodd" d="M24 24H64C96 24 112 40 112 68S96 112 64 112H24V24ZM48 48V88H62C79 88 88 81 88 68S79 48 62 48H48Z"/>
+    <path d="M144 24H168V88H232V112H144V24Z"/>
+    <path d="M24 144H112V168H80V208H112V232H24V208H56V168H24V144Z"/>
+    <path d="M144 232V144H168L188 180L208 144H232V232H208V188L188 220L168 188V232H144Z"/>
+  </g>
+</svg>
