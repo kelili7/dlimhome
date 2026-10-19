@@ -1,5 +1,14 @@
 <script setup>
-import { nextTick, provide, ref } from 'vue'
+import { nextTick, provide, ref, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
+import { useLocale } from './composables/useLocale'
+const { t, locale } = useLocale()
+const route = useRoute()
+watchEffect(() => {
+ document.documentElement.lang = locale.value === 'zh' ? 'zh-CN' : 'en'
+ document.title = `${t(route.meta.titleKey || 'nav.home')} | DLIM HOME`
+ document.querySelector('meta[name=description]')?.setAttribute('content', t('about.intro'))
+})
 import { X } from 'lucide-vue-next'
 import SiteHeader from './components/SiteHeader.vue'
 import SiteFooter from './components/SiteFooter.vue'
@@ -28,6 +37,6 @@ function keepDialogFocus(event) {
 }
 </script>
 <template>
-  <a class="skip-link" href="#main-content">Skip to content</a><SiteHeader /><RouterView /><SiteFooter />
-  <dialog ref="dialog" class="preview-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-copy" @click="closeBackdrop" @keydown.tab="keepDialogFocus"><div class="dialog-content"><button class="icon-button dialog-close" type="button" aria-label="Close dialog" @click="dialog.close()"><X /></button><p class="eyebrow">Template preview</p><h2 id="dialog-title">{{ dialogTitle }}</h2><p id="dialog-copy">{{ dialogCopy }}</p><button class="button button-dark" type="button" @click="dialog.close()">Got it</button></div></dialog>
+  <a class="skip-link" href="#main-content">{{ t('common.skip') }}</a><SiteHeader /><RouterView /><SiteFooter />
+  <dialog ref="dialog" class="preview-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-copy" @click="closeBackdrop" @keydown.tab="keepDialogFocus"><div class="dialog-content"><button class="icon-button dialog-close" type="button" :aria-label="t('common.close')" @click="dialog.close()"><X /></button><p class="eyebrow">DLIM HOME</p><h2 id="dialog-title">{{ t(dialogTitle) }}</h2><p id="dialog-copy">{{ t(dialogCopy) }}</p><button class="button button-dark" type="button" @click="dialog.close()">{{ t('common.understood') }}</button></div></dialog>
 </template>

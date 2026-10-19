@@ -1,0 +1,9 @@
+<script setup>
+import { brandValues } from '../data/site'
+import { useLocale } from '../composables/useLocale'
+import PageHero from '../components/PageHero.vue'
+import StoreLinks from '../components/StoreLinks.vue'
+import GradientButton from '../components/GradientButton.vue'
+const { t, tx } = useLocale()
+</script>
+<template><main id="main-content"><PageHero page="about" image="gathering"><GradientButton to="/products">{{ t('common.explore') }}</GradientButton></PageHero><section class="section-space section-muted"><div class="container two-columns"><img class="editorial-image" src="/images/ceramics/ritual.jpg" :alt="t('common.imageNote')" loading="lazy" width="640" height="640" /><div><p class="eyebrow">{{ t('about.storyLabel') }}</p><h2>{{ t('about.storyTitle') }}</h2><p class="lead">{{ t('about.storyCopy') }}</p><RouterLink to="/factory" class="text-link">{{ t('common.factory') }} ↗</RouterLink></div></div></section><section class="section-space"><div class="container"><div class="section-heading"><h2>{{ t('about.valuesTitle') }}</h2></div><div class="values-grid"><article v-for="value in brandValues" :key="value.number" class="editorial-card"><span class="step-number">{{ value.number }}</span><h3>{{ tx(value.title) }}</h3><p>{{ tx(value.text) }}</p></article></div></div></section><section class="section-space section-muted"><div class="container two-columns"><div><p class="eyebrow">{{ t('about.channelsLabel') }}</p><h2>{{ t('about.channelsTitle') }}</h2><p class="lead">{{ t('about.channelsCopy') }}</p><StoreLinks /></div><img class="editorial-image" src="/images/ceramics/dining.jpg" :alt="t('common.imageNote')" loading="lazy" width="640" height="640" /></div></section></main></template>

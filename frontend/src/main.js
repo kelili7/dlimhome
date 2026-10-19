@@ -3,15 +3,30 @@ import { createRouter, createWebHistory } from 'vue-router'
 import './style.css'
 import App from './App.vue'
 import HomeView from './views/HomeView.vue'
+import ProductsView from './views/ProductsView.vue'
+import FactoryView from './views/FactoryView.vue'
+import AboutView from './views/AboutView.vue'
+import SupportView from './views/SupportView.vue'
+import ContactView from './views/ContactView.vue'
 import ProductView from './views/ProductView.vue'
+import NotFoundView from './views/NotFoundView.vue'
 const router = createRouter({
-  history: createWebHistory(),
-  routes: [{ path: '/', component: HomeView }, { path: '/product/:handle', component: ProductView }, { path: '/:pathMatch(.*)*', component: ProductView }],
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) return savedPosition
-    if (to.hash) return { el: to.hash, top: 100, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }
-    return { top: 0 }
-  },
+ history: createWebHistory(),
+ routes: [
+  { path: '/', component: HomeView, meta: { titleKey: 'nav.home' } },
+  { path: '/products', component: ProductsView, meta: { titleKey: 'nav.products' } },
+  { path: '/factory', component: FactoryView, meta: { titleKey: 'nav.factory' } },
+  { path: '/about', component: AboutView, meta: { titleKey: 'nav.about' } },
+  { path: '/support', component: SupportView, meta: { titleKey: 'nav.support' } },
+  { path: '/contact', component: ContactView, meta: { titleKey: 'nav.contact' } },
+  { path: '/product/:handle', component: ProductView, meta: { titleKey: 'nav.products' } },
+  { path: '/:pathMatch(.*)*', component: NotFoundView, meta: { titleKey: 'common.missing' } },
+ ],
+ scrollBehavior(to, from, savedPosition) {
+  if (savedPosition) return savedPosition
+  if (to.hash) return { el: to.hash, top: 110, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }
+  if (to.path === from.path) return false
+  return { top: 0 }
+ },
 })
-router.afterEach(to => { document.title = to.path === '/' ? 'Logo — Your everyday, feeling better.' : 'Explore your care — Logo' })
 createApp(App).use(router).mount('#app')
