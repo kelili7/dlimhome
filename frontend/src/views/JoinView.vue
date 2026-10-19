@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from 'vue'
-import { ArrowUpRight, BookOpen, Users, Coffee, HeartHandshake, Mail, ShieldCheck, Check } from 'lucide-vue-next'
+import { ArrowUpRight, BookOpen, Users, Coffee, HeartHandshake, Mail, ShieldCheck, Check, Shapes, Globe2 } from 'lucide-vue-next'
 import { useLocale } from '../composables/useLocale'
+import EditorialCardHeader from '../components/EditorialCardHeader.vue'
 import PageHero from '../components/PageHero.vue'
 import ContactNavigation from '../components/ContactNavigation.vue'
 const { t } = useLocale()
+const reasonIcons = [Shapes, Globe2, Users]
 const benefitIcons = [BookOpen, Users, Coffee, HeartHandshake]
 const workplacePhotos = ['shared-space', 'studio', 'office']
 const sections = ['why', 'benefits', 'process', 'apply']
@@ -17,7 +19,7 @@ const applicationLink = computed(() => `mailto:hr@dlim.com?subject=${encodeURICo
   <nav class="careers-contents container" :aria-label="t('careers.contents')"><a v-for="(section, i) in sections" :key="section" :href="`#${section}`"><span>0{{ i + 1 }}</span>{{ t(`careers.${section}Title`) }}<ArrowUpRight :size="16" aria-hidden="true" /></a></nav>
   <section id="why" class="section-space section-muted"><div class="container">
    <div class="section-heading"><p class="eyebrow">{{ t('careers.whyLabel') }}</p><h2>{{ t('careers.whyTitle') }}</h2><p class="lead">{{ t('careers.whyIntro') }}</p></div>
-   <div class="values-grid"><article v-for="(reason, i) in t('careers.reasons')" :key="reason.title" class="editorial-card"><span class="step-number">0{{ i + 1 }}</span><h3>{{ reason.title }}</h3><p>{{ reason.text }}</p></article></div>
+   <div class="values-grid"><article v-for="(reason, i) in t('careers.reasons')" :key="reason.title" class="editorial-card editorial-card--illustrated"><EditorialCardHeader :number="`0${i + 1}`" :icon="reasonIcons[i]" /><h3>{{ reason.title }}</h3><p>{{ reason.text }}</p></article></div>
    <div class="workplace-heading"><p class="eyebrow">{{ t('careers.workplaceLabel') }}</p><h3>{{ t('careers.workplaceTitle') }}</h3><p class="lead">{{ t('careers.workplaceCopy') }}</p></div>
    <div class="workplace-gallery"><figure v-for="(photo, i) in workplacePhotos" :key="photo"><a :href="`/images/company/${photo}.jpg`" target="_blank" rel="noopener noreferrer" :aria-label="`${t('careers.viewPhoto')} · ${t('careers.workplacePhotos')[i]}`"><img :src="`/images/company/${photo}.jpg`" :alt="t('careers.workplacePhotos')[i]" loading="lazy" width="1350" height="1800" /><span class="photo-expand" aria-hidden="true"><ArrowUpRight :size="18" /></span></a><figcaption><span>0{{ i + 1 }}</span>{{ t('careers.workplacePhotos')[i] }}</figcaption></figure></div>
   </div></section>

@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test'
+import { openPage } from './helpers/navigation.js'
 
 for (const reducedMotion of ['no-preference', 'reduce']) {
  test(`back to top visibility, focus and motion preference: ${reducedMotion}`, async ({ page }) => {
   await page.emulateMedia({ reducedMotion })
-  await page.goto('/')
+  await openPage(page, '/')
   const button = page.getByRole('button', { name: 'Back to Top', exact: true })
   await expect(button).toHaveCount(0)
   await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }))
@@ -20,7 +21,7 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
   expect(await page.evaluate(() => window.lastScrollBehavior)).toBe(reducedMotion === 'reduce' ? 'instant' : 'smooth')
   await expect(button).toHaveCount(0)
   await expect(page.locator('.site-header .logo')).toBeFocused()
-  await page.goto('/about#company-background')
+  await openPage(page, '/about#company-background')
   await expect(button).toBeVisible()
   await page.locator('.site-header .logo').click()
   await expect(button).toHaveCount(0)

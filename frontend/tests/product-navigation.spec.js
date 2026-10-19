@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { openPage } from './helpers/navigation.js'
 
 test.beforeEach(async ({ page }) => {
  await page.addInitScript(() => {
@@ -24,7 +25,7 @@ for (const width of [1440, 390]) {
  for (const source of ['/', '/products?category=drinkware&q=glass#catalogue']) {
   test(`product return restores ${source} at ${width}px, including after reload`, async ({ page }) => {
    await page.setViewportSize({ width, height: 900 })
-   await page.goto(source)
+   await openPage(page, source)
    const link = page.locator('.product-card').last().getByRole('link', { name: 'View collection', exact: true })
    await link.scrollIntoViewIfNeeded()
    const position = await page.evaluate(() => scrollY)
@@ -34,6 +35,7 @@ for (const width of [1440, 390]) {
    await expect(page).toHaveURL(detail)
    await expectInstantPosition(page, detail, 0)
    await page.reload()
+   await page.getByRole('button', { name: '切换至英文' }).click()
    await expect(page.locator('.back-link')).toHaveAttribute('href', source)
    await page.locator('.back-link').click()
    await expect(page).toHaveURL(source)
@@ -48,7 +50,7 @@ for (const width of [1440, 390]) {
 }
 
 test('browser back restores the catalogue position immediately', async ({ page }) => {
- await page.goto('/products')
+ await openPage(page, '/products')
  const link = page.locator('.product-card').last().locator('.product-image-link')
  await link.scrollIntoViewIfNeeded()
  const position = await page.evaluate(() => scrollY)
@@ -59,8 +61,8 @@ test('browser back restores the catalogue position immediately', async ({ page }
  await expectInstantPosition(page, '/products', position)
 })
 
-test('a direct product visit returns to the catalogue without animation', async ({ page }) => {
- await page.goto('/product/heart-coffee-cups')
+test('a product visit without a catalogue origin returns to the catalogue without animation', async ({ page }) => {
+ await openPage(page, '/product/heart-coffee-cups')
  await page.locator('.back-link').click()
  await expect(page).toHaveURL('/products#catalogue')
  await expect.poll(() => page.evaluate(() => window.routeScrolls.some(item => item.path === '/products'))).toBe(true)

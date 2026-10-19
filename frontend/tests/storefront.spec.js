@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test'
+import { openPage } from './helpers/navigation.js'
 
 test('landing page renders all sections and local images without runtime errors', async ({ page }, testInfo) => {
   const errors = []
   page.on('pageerror', error => errors.push(error.message))
-  await page.goto('/')
+  await openPage(page, '/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Considered ceramics. Made for living.')
-  await expect(page.locator('main > section')).toHaveCount(7)
+  await expect(page.locator('main > section')).toHaveCount(6)
+  await expect(page.locator('#faq')).toHaveCount(0)
   await expect(page.locator('.product-card')).toHaveCount(3)
   await expect(page.locator('.science-badge')).toHaveCount(6)
   await expect(page.locator('.guide-card')).toHaveCount(4)
@@ -21,7 +23,7 @@ test('landing page renders all sections and local images without runtime errors'
 })
 
 test('marquees loop in opposite directions at the specified speed', async ({ page }) => {
-  await page.goto('/')
+  await openPage(page, '/')
   const tracks = page.locator('.marquee-track')
   const animations = await tracks.evaluateAll(items => items.map(item => { const s = getComputedStyle(item); return { name: s.animationName, duration: s.animationDuration, timing: s.animationTimingFunction, repeat: s.animationIterationCount, height: item.getBoundingClientRect().height } }))
   expect(animations.map(a => a.name)).toEqual(['marquee', 'marquee-reverse'])
@@ -41,7 +43,7 @@ test('marquees loop in opposite directions at the specified speed', async ({ pag
 })
 
 test('carousel supports buttons, wrapping, dots and keyboard', async ({ page }) => {
-  await page.goto('/')
+  await openPage(page, '/')
   const slides = page.locator('.carousel-slide')
   await expect(slides.nth(0)).toHaveAttribute('aria-hidden', 'false')
   await page.getByRole('button', { name: 'Next collection' }).click()
@@ -57,7 +59,7 @@ test('carousel supports buttons, wrapping, dots and keyboard', async ({ page }) 
 })
 
 test('FAQ opens one answer, closes it, and supports keyboard focus', async ({ page }) => {
-  await page.goto('/#faq')
+  await openPage(page, '/support#faq')
   const questions = page.locator('.faq-trigger')
   await questions.nth(0).click()
   await expect(questions.nth(0)).toHaveAttribute('aria-expanded', 'true')
@@ -68,28 +70,29 @@ test('FAQ opens one answer, closes it, and supports keyboard focus', async ({ pa
   await page.keyboard.press('ArrowDown')
   await expect(questions.nth(2)).toBeFocused()
   await page.keyboard.press('End')
-  await expect(questions.nth(4)).toBeFocused()
+  await expect(questions.last()).toBeFocused()
   await page.keyboard.press('Home')
   await expect(questions.nth(0)).toBeFocused()
   await questions.nth(1).click()
   await expect(questions.nth(1)).toHaveAttribute('aria-expanded', 'false')
 })
 
-test('product links support direct loads, back navigation and unknown routes', async ({ page }) => {
-  await page.goto('/')
+test('product links support reloads, back navigation and unknown routes', async ({ page }) => {
+  await openPage(page, '/')
   await page.locator('.product-card').first().getByRole('link', { name: 'View collection', exact: true }).click()
   await expect(page).toHaveURL(/\/product\/heart-coffee-cups$/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.reload()
+  await page.getByRole('button', { name: '切换至英文' }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.getByRole('link', { name: 'Back to products' }).click()
   await expect(page).toHaveURL('/')
-  await page.goto('/product/missing')
+  await openPage(page, '/product/missing')
   await expect(page.getByRole('heading', { name: 'This page is still unwritten.' })).toBeVisible()
 })
 
 test('store policy dialog traps focus and returns focus', async ({ page }) => {
-  await page.goto('/')
+  await openPage(page, '/')
   const trigger = page.getByRole('button', { name: 'Store policies', exact: true })
   await trigger.click()
   await expect(page.getByRole('dialog')).toBeVisible()
@@ -104,7 +107,7 @@ test('store policy dialog traps focus and returns focus', async ({ page }) => {
 for (const width of [320, 390, 768]) {
   test(`responsive layout at ${width}px has no horizontal overflow`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 844 })
-    await page.goto('/')
+    await openPage(page, '/')
     if (width === 390) {
       for (const section of await page.locator('main > section').all()) await section.scrollIntoViewIfNeeded()
       await page.locator('img').evaluateAll(images => images.forEach(image => { image.loading = 'eager' }))
@@ -122,7 +125,7 @@ for (const width of [320, 390, 768]) {
 
 test('reduced motion turns off continuous effects', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/')
+  await openPage(page, '/')
   await expect(page.locator('.marquee-track').first()).toHaveCSS('animation-name', 'none')
   const languageButton = page.getByRole('button', { name: 'Switch to Chinese', exact: true })
   await languageButton.hover()
@@ -139,10 +142,10 @@ const routes = [
   ['/contact/join-us', 'Join Us', 'Make everyday life a little more considered.', '加入我们', '一起，为日常 多做一点用心的事。'],
 ]
 for (const [path, nav, heading, zhNav, zhHeading] of routes) {
- test(`${nav} supports direct loading, both languages, and narrow screens`, async ({ page }, testInfo) => {
+ test(`${nav} supports in-site navigation, both languages, and narrow screens`, async ({ page }, testInfo) => {
   const errors = []
   page.on('pageerror', error => errors.push(error.message))
-  await page.goto(path)
+  await openPage(page, path)
   await expect(page.locator('h1')).toHaveText(heading)
   await expect(page).toHaveTitle(`${nav} | DLIM HOME`)
   await expect(page.locator('.desktop-nav .primary-nav-item')).toHaveText(['Home', 'Products', 'Factory', 'About Us', 'Support', 'Contact Us'])
@@ -172,7 +175,7 @@ for (const [path, nav, heading, zhNav, zhHeading] of routes) {
 
 test('mobile navigation includes both contact destinations, closes after selection and restores focus on Escape', async ({ page }) => {
  await page.setViewportSize({ width: 390, height: 844 })
- await page.goto('/')
+ await openPage(page, '/')
  await page.getByRole('button', { name: 'Open menu' }).click()
  await expect(page.locator('#mobile-navigation a')).toHaveCount(7)
  await page.keyboard.press('Escape')
@@ -189,7 +192,7 @@ test('mobile navigation includes both contact destinations, closes after selecti
 })
 
 test('catalog filters and search work together, survive language changes, and reset', async ({ page }) => {
- await page.goto('/products')
+ await openPage(page, '/products')
  await expect(page.locator('.product-card')).toHaveCount(8)
  await page.getByRole('button', { name: 'Bowls', exact: true }).click()
  await expect(page.locator('.product-card')).toHaveCount(1)
@@ -210,7 +213,7 @@ test('catalog filters and search work together, survive language changes, and re
 })
 
 test('product gallery, enquiry context and official stores are connected', async ({ page }) => {
- await page.goto('/product/everyday-dinnerware')
+ await openPage(page, '/product/everyday-dinnerware')
  await page.getByRole('button', { name: 'Show 2', exact: true }).click()
  await expect(page.locator('.product-gallery > img')).toHaveAttribute('src', '/images/ceramics/dining.jpg')
  await page.getByRole('link', { name: 'Visit Amazon' }).first().evaluate(a => {
@@ -219,14 +222,14 @@ test('product gallery, enquiry context and official stores are connected', async
  await page.locator('.product-enquire').click()
  await expect(page.locator('.selected-product')).toContainText('Everyday Tableware')
  await expect(page.locator('select[name=interest]')).toHaveValue('1')
- await page.goto('/missing')
+ await openPage(page, '/missing')
  await expect(page.locator('h1')).toHaveText('This page is still unwritten.')
 })
 
 test('enquiry validates email, creates a local draft, translates and downloads without sending', async ({ page }) => {
  const requests = []
  page.on('request', request => { if (request.method() === 'POST') requests.push(request.url()) })
- await page.goto('/contact?interest=2')
+ await openPage(page, '/contact?interest=2')
  await page.locator('input[name=name]').fill('Taylor')
  await page.locator('input[name=email]').fill('invalid')
  await page.locator('textarea[name=message]').fill('White plates for a new collection.')

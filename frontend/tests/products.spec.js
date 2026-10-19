@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { openPage } from './helpers/navigation.js'
 
 const additions = [
  ['heart-coffee-cups', 'Heart Detail Coffee Cups', '爱心点缀咖啡杯系列', 'Ceramic'],
@@ -8,7 +9,7 @@ const additions = [
 ]
 
 test('all supplied photographs appear in both seamless marquee copies', async ({ page }) => {
- await page.goto('/')
+ await openPage(page, '/')
  for (const [handle] of additions) {
   const images = page.locator(`.hero-marquees img[src="/images/products/${handle}.jpg"]`)
   await expect(images).toHaveCount(2)
@@ -20,7 +21,7 @@ test('all supplied photographs appear in both seamless marquee copies', async ({
 })
 
 test('new categories, bilingual search and collection links work', async ({ page }, testInfo) => {
- await page.goto('/products#catalogue')
+ await openPage(page, '/products#catalogue')
  await expect(page.locator('.product-card')).toHaveCount(8)
  await page.getByRole('button', { name: 'Drinkware', exact: true }).click()
  await expect(page.locator('.product-card')).toHaveCount(3)
@@ -35,7 +36,7 @@ test('new categories, bilingual search and collection links work', async ({ page
  await expect(page.locator('.product-card h3')).toHaveText('厨房锅盖置物架系列')
  await page.getByRole('link', { name: '查看产品', exact: true }).click()
  await expect(page).toHaveURL(/\/product\/kitchen-lid-racks$/)
- await page.goto('/products#catalogue')
+ await openPage(page, '/products#catalogue')
  await page.locator('img').evaluateAll(imgs => imgs.forEach(img => { img.loading = 'eager' }))
  await expect.poll(() => page.locator('img').evaluateAll(imgs => imgs.every(img => img.complete && img.naturalWidth > 0))).toBe(true)
  await page.screenshot({ path: testInfo.outputPath('expanded-catalogue-desktop.png'), fullPage: true, animations: 'disabled' })
@@ -45,7 +46,7 @@ test('new categories, bilingual search and collection links work', async ({ page
 
 for (const [handle, title, zhTitle, material] of additions) {
  test(`${handle} loads its image, correct material and enquiry context`, async ({ page }) => {
-  await page.goto(`/product/${handle}`)
+  await openPage(page, `/product/${handle}`)
   await expect(page.locator('h1')).toHaveText(title)
   const photo = page.locator('.product-gallery > img')
   await expect(photo).toHaveAttribute('src', `/images/products/${handle}.jpg`)
