@@ -1,0 +1,153 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "品牌概述",
+      "subsections": 9,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 2,
+      "title": "Logo 标识系统",
+      "subsections": 12,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 2
+    },
+    {
+      "chapter": 3,
+      "title": "Logo 规范",
+      "subsections": 8,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 4,
+      "title": "色彩系统",
+      "subsections": 11,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 5,
+      "title": "字体系统",
+      "subsections": 11,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 6,
+      "title": "图形语言系统",
+      "subsections": 7,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 7,
+      "title": "图标系统",
+      "subsections": 8,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 8,
+      "title": "图像与影像系统",
+      "subsections": 9,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 1
+    },
+    {
+      "chapter": 9,
+      "title": "版式系统",
+      "subsections": 10,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 10,
+      "title": "数字产品视觉规范",
+      "subsections": 13,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 11,
+      "title": "动效系统",
+      "subsections": 10,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 12,
+      "title": "办公物料系统",
+      "subsections": 11,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 3
+    },
+    {
+      "chapter": 13,
+      "title": "宣传物料系统",
+      "subsections": 10,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 1
+    },
+    {
+      "chapter": 14,
+      "title": "数字媒体系统",
+      "subsections": 13,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 2
+    },
+    {
+      "chapter": 15,
+      "title": "包装系统",
+      "subsections": 12,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 1
+    },
+    {
+      "chapter": 16,
+      "title": "空间与环境系统",
+      "subsections": 9,
+      "status": "本阶段不适用，已说明 / N/A explained",
+      "na_count": 9
+    },
+    {
+      "chapter": 17,
+      "title": "周边系统",
+      "subsections": 10,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 8
+    },
+    {
+      "chapter": 18,
+      "title": "品牌应用展示",
+      "subsections": 8,
+      "status": "已覆盖，含不适用说明 / Covered with N/A notes",
+      "na_count": 1
+    },
+    {
+      "chapter": 19,
+      "title": "禁用规范总览",
+      "subsections": 8,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 20,
+      "title": "文件交付规范",
+      "subsections": 7,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    },
+    {
+      "chapter": 21,
+      "title": "品牌管理规范",
+      "subsections": 7,
+      "status": "已覆盖 / Covered",
+      "na_count": 0
+    }
+  ],
+  "subsection_count": 203,
+  "images": 8
+}

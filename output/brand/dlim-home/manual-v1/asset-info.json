@@ -1,0 +1,79 @@
+{
+  "assets/logos/logo-system-board.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "assets/logos/primary-white-on-dark.png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGB"
+  },
+  "assets/logos/monogram-transparent.png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "bbox": [
+      274,
+      333,
+      1094,
+      999
+    ]
+  },
+  "assets/logos/primary-black-on-white.png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGB"
+  },
+  "assets/logos/primary-transparent.png": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "bbox": [
+      123,
+      314,
+      1135,
+      998
+    ]
+  },
+  "assets/applications/02-product-box.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "assets/applications/07-glaze-detail.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "assets/applications/01-ceramic-stamp.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "assets/applications/05-shopping-bag.png": {
+    "width": 1122,
+    "height": 1402,
+    "mode": "RGB"
+  },
+  "assets/applications/04-care-cards.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "assets/applications/06-table-hero.png": {
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB"
+  },
+  "assets/applications/08-social-scene.png": {
+    "width": 1122,
+    "height": 1402,
+    "mode": "RGB"
+  },
+  "assets/applications/03-shipping-label.png": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  }
+}

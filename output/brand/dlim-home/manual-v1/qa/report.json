@@ -1,0 +1,34 @@
+{
+  "result": "PASS",
+  "chapters": 21,
+  "subsections": 203,
+  "localLinks": "all valid",
+  "images": "loaded with preserved aspect ratios",
+  "clipboard": "HTTP and file URL passed",
+  "dialog": "Escape and focus restoration passed",
+  "form": "invalid and valid cases passed",
+  "responsive": [
+    {
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "width": 375,
+      "overflow": false
+    }
+  ],
+  "reducedMotion": "passed",
+  "runtimeErrors": []
+}

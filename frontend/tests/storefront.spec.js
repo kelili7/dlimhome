@@ -78,12 +78,12 @@ test('FAQ opens one answer, closes it, and supports keyboard focus', async ({ pa
 test('product links support direct loads, back navigation and unknown routes', async ({ page }) => {
   await page.goto('/')
   await page.locator('.product-card').first().getByRole('link', { name: 'View collection', exact: true }).click()
-  await expect(page).toHaveURL(/\/product\/serving-bowls$/)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('The Serving Bowl Collection')
+  await expect(page).toHaveURL(/\/product\/heart-coffee-cups$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.reload()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('The Serving Bowl Collection')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.getByRole('link', { name: 'Back to products' }).click()
-  await expect(page).toHaveURL(/\/products$/)
+  await expect(page).toHaveURL('/')
   await page.goto('/product/missing')
   await expect(page.getByRole('heading', { name: 'This page is still unwritten.' })).toBeVisible()
 })
@@ -135,7 +135,8 @@ const routes = [
   ['/factory', 'Factory', 'The beauty is in the making.', '工厂', '器物之美， 始于制作。'],
   ['/about', 'About Us', 'Everyday objects. Lasting meaning.', '关于我们', '日常器物， 长久的意义。'],
   ['/support', 'Support', 'Care for the pieces. Enjoy the moments.', '服务支持', '照料好器物， 享受每一刻。'],
-  ['/contact', 'Contact Us', 'Something beautiful starts here.', '联系我们', '美好的合作， 从这里开始。'],
+  ['/contact/business-enquiry', 'Business Enquiry', 'Something beautiful starts here.', '业务咨询', '美好的合作， 从这里开始。'],
+  ['/contact/join-us', 'Join Us', 'Make everyday life a little more considered.', '加入我们', '一起，为日常 多做一点用心的事。'],
 ]
 for (const [path, nav, heading, zhNav, zhHeading] of routes) {
  test(`${nav} supports direct loading, both languages, and narrow screens`, async ({ page }, testInfo) => {
@@ -144,7 +145,7 @@ for (const [path, nav, heading, zhNav, zhHeading] of routes) {
   await page.goto(path)
   await expect(page.locator('h1')).toHaveText(heading)
   await expect(page).toHaveTitle(`${nav} | DLIM HOME`)
-  await expect(page.locator('.desktop-nav a')).toHaveText(routes.map(r => r[1]))
+  await expect(page.locator('.desktop-nav .primary-nav-item')).toHaveText(['Home', 'Products', 'Factory', 'About Us', 'Support', 'Contact Us'])
   await page.locator('img').evaluateAll(imgs => imgs.forEach(img => { img.loading = 'eager' }))
   await expect.poll(() => page.locator('img').evaluateAll(imgs => imgs.every(img => img.complete && img.naturalWidth > 0))).toBe(true)
   for (const section of await page.locator('main > section').all()) await section.scrollIntoViewIfNeeded()
@@ -153,7 +154,7 @@ for (const [path, nav, heading, zhNav, zhHeading] of routes) {
   await page.getByRole('button', { name: 'Switch to Chinese' }).click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
   await expect(page.locator('h1')).toHaveText(zhHeading)
-  await expect(page.locator('.desktop-nav a')).toHaveText(routes.map(r => r[3]))
+  await expect(page.locator('.desktop-nav .primary-nav-item')).toHaveText(['首页', '产品', '工厂', '关于我们', '服务支持', '联系我们'])
   await page.reload()
   await expect(page).toHaveTitle(`${zhNav} | DLIM HOME`)
   for (const width of [320, 390, 768, 1024]) {
@@ -169,11 +170,11 @@ for (const [path, nav, heading, zhNav, zhHeading] of routes) {
  })
 }
 
-test('mobile navigation has six destinations, closes after selection and restores focus on Escape', async ({ page }) => {
+test('mobile navigation includes both contact destinations, closes after selection and restores focus on Escape', async ({ page }) => {
  await page.setViewportSize({ width: 390, height: 844 })
  await page.goto('/')
  await page.getByRole('button', { name: 'Open menu' }).click()
- await expect(page.locator('#mobile-navigation a')).toHaveCount(6)
+ await expect(page.locator('#mobile-navigation a')).toHaveCount(7)
  await page.keyboard.press('Escape')
  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused()
  await page.getByRole('button', { name: 'Open menu' }).click()
@@ -189,7 +190,7 @@ test('mobile navigation has six destinations, closes after selection and restore
 
 test('catalog filters and search work together, survive language changes, and reset', async ({ page }) => {
  await page.goto('/products')
- await expect(page.locator('.product-card')).toHaveCount(4)
+ await expect(page.locator('.product-card')).toHaveCount(8)
  await page.getByRole('button', { name: 'Bowls', exact: true }).click()
  await expect(page.locator('.product-card')).toHaveCount(1)
  await page.getByRole('button', { name: 'Switch to Chinese' }).click()
@@ -197,7 +198,7 @@ test('catalog filters and search work together, survive language changes, and re
  await page.locator('#catalogue-search').fill('no-match')
  await expect(page.getByText('暂未找到相关器物。')).toBeVisible()
  await page.getByRole('button', { name: '清除筛选' }).click()
- await expect(page.locator('.product-card')).toHaveCount(4)
+ await expect(page.locator('.product-card')).toHaveCount(8)
  await page.locator('#catalogue-search').fill('烘焙')
  await expect(page.locator('.product-card')).toHaveCount(1)
  await page.reload()

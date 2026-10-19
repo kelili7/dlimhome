@@ -1,0 +1,26 @@
+:root {
+  --color-ink: #342F2B;
+  --color-porcelain: #F6F3ED;
+  --color-glaze: #667362;
+  --color-deep-glaze: #465344;
+  --color-stone: #E6E1D8;
+  --color-muted: #655F57;
+  --color-error: #9C3B32;
+  --color-advisory: #75552A;
+  --font-sans: "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif: "Source Han Serif SC", "Songti SC", "STSong", serif;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-96: 96px;
+  --radius-control: 4px;
+  --radius-card: 8px;
+  --motion-feedback: 180ms;
+  --motion-reveal: 320ms;
+  --motion-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

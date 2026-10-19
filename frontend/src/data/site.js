@@ -5,10 +5,14 @@ export const stores = {
   amazon: 'https://www.amazon.com/stores/DLIMHOME/page/C4D9CF2D-0C18-4E7E-8167-46A01ED081DA',
   taobao: 'https://shop552623256.taobao.com/',
 }
+export const contactNavigation = [
+  { key: 'business', to: '/contact/business-enquiry' },
+  { key: 'join', to: '/contact/join-us' },
+]
 export const navigation = [
   { key: 'home', to: '/' }, { key: 'products', to: '/products' },
   { key: 'factory', to: '/factory' }, { key: 'about', to: '/about' },
-  { key: 'support', to: '/support' }, { key: 'contact', to: '/contact' },
+  { key: 'support', to: '/support' }, { key: 'contact', to: '/contact/business-enquiry', children: contactNavigation },
 ]
 export const categories = [
   { id: 'all', label: bi('All pieces', '全部产品') },
@@ -16,6 +20,8 @@ export const categories = [
   { id: 'bowls', label: bi('Bowls', '碗类系列') },
   { id: 'serveware', label: bi('Serveware', '分享餐盘') },
   { id: 'bakeware', label: bi('Bakeware', '烘焙器皿') },
+  { id: 'drinkware', label: bi('Drinkware', '杯具系列') },
+  { id: 'kitchen-accessories', label: bi('Kitchen accessories', '厨房配件') },
 ]
 export const products = [
   {
@@ -54,8 +60,50 @@ export const products = [
     use: bi('Baking & serving — check item instructions', '烘焙与盛食，使用前请查看具体商品说明'),
     gallery: ['/images/ceramics/bakeware.jpg'],
   },
+  {
+    handle: 'heart-coffee-cups', category: 'drinkware', image: '/images/products/heart-coffee-cups.jpg', photograph: true,
+    name: bi('Heart Detail Coffee Cups', '爱心点缀咖啡杯系列'),
+    subtitle: bi('A little warmth in every detail', '一抹心意，温暖咖啡时光'),
+    description: bi('A softly textured white cup and matching saucer, finished with a red heart detail by the handle. A gentle accent for slow mornings, a favourite coffee and a moment to yourself.', '柔白杯身与同色杯碟相映，杯柄旁一抹红色爱心点缀，为简洁器形添上温度。让清晨的一杯咖啡，成为值得慢慢享受的日常片刻。'),
+    material: bi('Ceramic', '陶瓷'),
+    finish: bi('Soft white · red heart detail', '柔白杯身 · 红色爱心点缀'),
+    use: bi('Coffee moments & table settings', '咖啡时光与餐桌搭配'),
+    gallery: ['/images/products/heart-coffee-cups.jpg'],
+  },
+  {
+    handle: 'amber-textured-glasses', category: 'drinkware', image: '/images/products/amber-textured-glasses.jpg', photograph: true,
+    name: bi('Amber Footed Textured Glasses', '琥珀杯脚纹理杯系列'),
+    subtitle: bi('Texture, light and a touch of amber', '透亮纹理，映出琥珀色日常'),
+    description: bi('Patterned glass bowls meet short amber-coloured feet. Explore a mix of ribbed and decorative textures that bring character to fruit drinks, coffee and relaxed table settings.', '透亮杯身搭配琥珀色短杯脚，竖纹与装饰纹理呈现不同的光影趣味。用来搭配果饮、咖啡与日常餐桌，让一杯饮品也有自己的表情。'),
+    material: bi('Glass', '玻璃'),
+    finish: bi('Decorative textures · amber-coloured feet', '装饰纹理 · 琥珀色杯脚'),
+    use: bi('Drinks & everyday entertaining', '饮品盛放与日常款待'),
+    gallery: ['/images/products/amber-textured-glasses.jpg'],
+  },
+  {
+    handle: 'amber-stem-glasses', category: 'drinkware', image: '/images/products/amber-stem-glasses.jpg', photograph: true,
+    name: bi('Amber Stem Glassware', '琥珀杯脚高脚杯系列'),
+    subtitle: bi('A graceful shape for every gathering', '以优雅器形，点亮相聚时刻'),
+    description: bi('Clear, wide bowls pair with amber-coloured stems and bases. Straight and curved stem silhouettes bring a playful rhythm to a drinks table, from a quiet evening to a gathering with friends.', '通透的宽口杯身，与琥珀色杯脚和底座相遇。直线与曲线杯脚带来不同的造型趣味，为小聚、晚间饮品和餐桌布置添上一份仪式感。'),
+    material: bi('Glass', '玻璃'),
+    finish: bi('Clear bowls · sculptural amber stems', '通透杯身 · 琥珀色造型杯脚'),
+    use: bi('Mixed drinks & special table settings', '调饮、聚会与餐桌布置'),
+    gallery: ['/images/products/amber-stem-glasses.jpg'],
+  },
+  {
+    handle: 'kitchen-lid-racks', category: 'kitchen-accessories', image: '/images/products/kitchen-lid-racks.jpg', photograph: true,
+    name: bi('Kitchen Lid & Utensil Racks', '厨房锅盖置物架系列'),
+    subtitle: bi('A place for the little things', '让料理台面，更加从容有序'),
+    description: bi('Upright supports and a tray-style base create a resting place for lids and cooking utensils. Red and deep green accents bring a little character to the kitchen counter. Confirm the rack dimensions and included pieces in the selected listing.', '竖向支撑与托盘式底座，为锅盖和料理工具提供随手放置的位置。红色与深绿点缀让厨房台面多一点秩序与趣味。具体尺寸及包含配件，请以所选商品页面为准。'),
+    material: null,
+    finish: bi('Upright supports · red and green accents', '竖向支撑 · 红绿配色'),
+    use: bi('Countertop organisation & utensil resting', '厨房台面整理与料理工具放置'),
+    gallery: ['/images/products/kitchen-lid-racks.jpg'],
+  },
 ]
 export const featuredProducts = [products[0], products[1], products[3]]
+export const homeProducts = ['heart-coffee-cups', 'amber-textured-glasses', 'kitchen-lid-racks']
+  .map(handle => products.find(product => product.handle === handle))
 export const craftSteps = [
   { number: '01', title: bi('Start with a purpose', '从用途出发'), text: bi('A dining ritual, a serving idea, a collection brief. Define the shape, scale and feeling before refining the details.', '先明确用餐场景、分享方式与产品需求，再推敲器形、尺寸及整体感受。') },
   { number: '02', title: bi('Give the form its character', '赋予器形个性'), text: bi('Consider the silhouette, rim, handle and surface. Small decisions create a piece that feels coherent in the hand and on the table.', '从轮廓、口沿到把手与表面，微小的选择，让手感与视觉协调统一。') },

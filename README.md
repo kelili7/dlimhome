@@ -113,3 +113,17 @@ npm run test:e2e
 浏览器测试默认使用本机 Google Chrome。若使用 Playwright 自带 Chromium，先运行
 `npx playwright install chromium`，再运行 `PLAYWRIGHT_CHANNEL=chromium npm run test:e2e`。
 测试会复用 5173 端口现有服务；未运行时自动启动 Vite。后端健康状态位于页脚。
+
+## 企业介绍与联系页面
+
+- `/about` 增加 DLIM Home 品牌背景、品牌专注与渠道介绍。
+- 「联系我们」下设 `/contact/business-enquiry`（业务咨询）与 `/contact/join-us`（加入我们）。旧 `/contact` 链接重定向至业务咨询，并保留查询参数与锚点。
+- 业务咨询保留原店铺和本地咨询摘要功能，增加服务说明、准备清单与沟通流程。
+- 加入我们提供加入理由、员工福利、招聘流程及简历投递四个板块，投递地址为 `hr@dlim.com`。邮件链接打开邮件客户端，网站不直接收集或发送简历。
+- 新增中英文文案维护在 `frontend/src/data/companyMessages.js`；企业资料来源及未确认信息见 `frontend/CONTENT_SOURCES.md`。
+
+## 首页标语与回到顶部
+
+- 首页标语为“让世界每一个角落，都有DLIM HOME的温暖陪伴”，英文同步更新。
+- 全站 `BackToTop.vue` 按钮在滚动超过 400px 后显示，点击平滑回顶，顶部附近隐藏；减少动态效果偏好下立即回顶，键盘焦点返回页头 Logo。
+- `frontend/tests/back-to-top.spec.js` 覆盖首页标语、回顶显隐、滚动偏好及焦点恢复。

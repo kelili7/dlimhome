@@ -32,3 +32,46 @@
 | `dinnerware.jpg` | https://www.pexels.com/photo/ceramic-plates-on-the-table-6794583/ |
 
 [Pexels 使用条款](https://www.pexels.com/license/)。照片保持原始内容，通过 CSS 裁切或留白展示。旧版健康主题图片仍保留在 `public/images/` 根目录，本轮页面不再引用。
+
+## 品牌工作环境实拍
+
+2026-10-19 用户在本次会话中提供以下三张公司相册照片，用于官网品牌与招聘页面。
+仅进行了网页分辨率与 JPEG 压缩优化，未重绘、移除水印或改变实景内容。
+
+| 文件 | 场景 |
+| --- | --- |
+| `public/images/company/shared-space.jpg` | 公共空间与茶水区 |
+| `public/images/company/studio.jpg` | 拍摄区域与公共通道 |
+| `public/images/company/office.jpg` | 团队办公区 |
+
+招聘页使用办公区实拍作为首屏配图，并展示全部三张照片；相册链接支持查看完整照片。
+
+## 新增产品素材（2026-10-19）
+
+用户提供目录 `DLIM web产品图片开发素材` 中的四张产品照片，用于首页双列滚动和产品目录。
+以下是根据照片外观编辑的中英文系列名称，不代表已确认的 SKU、容量、套装件数或耐热规格。
+图片仅转为网页 JPEG、适度压缩，保留原图内容；前端采用 contain 展示，避免裁掉杯脚及配件。
+
+| 原文件 | 站内文件 | 系列 |
+| --- | --- | --- |
+| 已粘贴 2026-10-19 下午1.25.00.png | `public/images/products/heart-coffee-cups.jpg` | 爱心点缀咖啡杯 |
+| 已粘贴 2026-10-19 下午1.26.30.png | `public/images/products/amber-textured-glasses.jpg` | 琥珀杯脚纹理杯 |
+| 已粘贴 2026-10-19 下午1.41.33.png | `public/images/products/amber-stem-glasses.jpg` | 琥珀杯脚高脚杯 |
+| 已粘贴 2026-10-19 下午1.34.11.png | `public/images/products/kitchen-lid-racks.jpg` | 厨房锅盖置物架 |
+
+新增杯具和厨房配件分类。玻璃杯单独显示玻璃材质；置物架未确认材质，详情页不展示材质项。
+
+## 官网 Logo（2026-10-19）
+
+`public/images/brand/dlim-home.svg` 来自用户提供的 `DLIM-Home-transparent.svg`。仅收紧 SVG 的 viewBox 以移除外围留白，保留原始矢量路径与比例。页头显示黑色，深色页脚通过 CSS 反白；两处均链接至首页。
+
+## 首页场景图片更新（2026-10-19）
+
+用户在会话中提供两张餐桌产品图，转换为 JPEG 并压缩后用于首页双列滚动；未重绘图片内容。
+
+| 用户附件 | 站内文件 | 场景 |
+| --- | --- | --- |
+| `codex-clipboard-d2b4489d-6f72-43d3-ba6f-26c20eccaa7d.png` | `public/images/ceramics/sage-table-setting.jpg` | 青绿釉餐具与用餐场景 |
+| `codex-clipboard-88417cee-cd65-4e6d-a39d-b73336ef4224.png` | `public/images/ceramics/sage-breakfast-table.jpg` | 木桌上的杯碗与水果 |
+
+双列滚动移除三张白底产品图。首页三张产品卡片改为爱心咖啡杯、琥珀纹理杯、厨房置物架，使用已有产品照片与对应详情链接；卡片以 cover 填满画面，咖啡杯靠右裁切保留杯柄，产品详情仍完整展示原图。
