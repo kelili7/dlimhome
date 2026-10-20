@@ -127,3 +127,16 @@ npm run test:e2e
 - 首页标语为“让世界每一个角落，都有DLIM HOME的温暖陪伴”，英文同步更新。
 - 全站 `BackToTop.vue` 按钮在滚动超过 400px 后显示，点击平滑回顶，顶部附近隐藏；减少动态效果偏好下立即回顶，键盘焦点返回页头 Logo。
 - `frontend/tests/back-to-top.spec.js` 覆盖首页标语、回顶显隐、滚动偏好及焦点恢复。
+
+## 页面动效
+
+全站使用 GSAP、ScrollTrigger、ScrollToPlugin 和 CustomEase，保留原页面结构、内容与静止排版。
+
+- `frontend/src/motion/gsap.js` 统一注册插件与缓动曲线，并协调页面挂载和路由滚动恢复。
+- `frontend/src/composables/useRouteMotion.js` 提供 180ms 淡出、850ms 自下而上杂志揭幕；遮罩按当前视口计算，兼容历史滚动恢复。滚轮、触摸、阅读按键或内容获得焦点时立即完成揭幕；查询参数与同页锚点更新不会重播整页转场。
+- `frontend/src/composables/usePageMotion.js` 在 Vue 挂载后编排首屏图文、滚动区块和卡片错峰入场，卸载时清理 context、触发器与观察器。新增页面只需在现有 `main` 上绑定返回的 `motionRoot`。
+- `frontend/src/motion/pageParallax.js` 为场景照片添加轻微景深视差：桌面最大上下各 12px、手机各 6px，以 650ms / 500ms 的 scrub 缓动跟随滚动。照片轻微放大后用补偿遮罩保持原有显示边界，产品白底图与轮播不参与。
+- `frontend/src/motion/settings.js` 集中管理节奏：首屏约 750ms，滚动区块约 650ms（手机 550ms），错峰间隔 60ms。区块保持完整亮度，只在屏幕外预置小幅位移再入场，避免先显示后突然变淡；已展示的内容不会因响应式断点变化重播。页面切换使用透明度与 clip-path，区块只移动 transform；不拆分文字、不新增布局包裹或固定滚动区。系统开启“减少动态效果”时立即还原静态内容。
+- 同页锚点由 ScrollToPlugin 平滑定位，保留 URL、查询参数与浏览历史；用户手动滚动可中断。跨页锚点及历史返回立即恢复位置。
+- 图片加载、字体完成、筛选或 FAQ 高度变化后合并刷新触发位置；首页双列图片离屏或标签页隐藏时暂停。
+- `frontend/tests/motion.spec.js` 覆盖逐帧亮度稳定、断点切换不重播、揭幕节奏与中断、视差方向与图片显示边界、滚动入场、样式恢复、快速导航、动态筛选、减少动态效果及离屏暂停。

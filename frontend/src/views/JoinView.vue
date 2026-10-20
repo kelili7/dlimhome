@@ -1,4 +1,6 @@
 <script setup>
+import { usePageMotion } from '../composables/usePageMotion'
+const motionRoot = usePageMotion()
 import { computed } from 'vue'
 import { ArrowUpRight, BookOpen, Users, Coffee, HeartHandshake, Mail, ShieldCheck, Check, Shapes, Globe2 } from 'lucide-vue-next'
 import { useLocale } from '../composables/useLocale'
@@ -13,7 +15,7 @@ const sections = ['why', 'benefits', 'process', 'apply']
 const applicationLink = computed(() => `mailto:hr@dlim.com?subject=${encodeURIComponent(t('careers.subject'))}`)
 </script>
 <template>
- <main id="main-content" class="careers-page">
+ <main ref="motionRoot" id="main-content" class="careers-page">
   <ContactNavigation />
   <PageHero page="careers" image-src="/images/company/office.jpg" :image-alt="t('careers.workplacePhotos')[2]"><a href="#apply" class="button button-dark">{{ t('careers.applyCta') }}<ArrowUpRight :size="18" aria-hidden="true" /></a></PageHero>
   <nav class="careers-contents container" :aria-label="t('careers.contents')"><a v-for="(section, i) in sections" :key="section" :href="`#${section}`"><span>0{{ i + 1 }}</span>{{ t(`careers.${section}Title`) }}<ArrowUpRight :size="16" aria-hidden="true" /></a></nav>

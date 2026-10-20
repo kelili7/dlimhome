@@ -9,7 +9,8 @@
   --radius: 9999px; --shadow: 2px 4px 12px hsl(0 0% 0% / .08);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+/* ScrollTo owns anchor easing; native smooth scrolling conflicts with trigger measurements. */
+html { scroll-behavior: auto; scroll-padding-top: 100px; }
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }

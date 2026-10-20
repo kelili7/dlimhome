@@ -1,7 +1,9 @@
 <script setup>
 import { nextTick, provide, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import { useRouteMotion } from './composables/useRouteMotion'
 import { useLocale } from './composables/useLocale'
+const routeMotion = useRouteMotion()
 const { t, locale } = useLocale()
 const route = useRoute()
 watchEffect(() => {
@@ -38,6 +40,15 @@ function keepDialogFocus(event) {
 }
 </script>
 <template>
-  <a class="skip-link" href="#main-content">{{ t('common.skip') }}</a><SiteHeader /><RouterView /><SiteFooter /><BackToTop />
+  <a class="skip-link" href="#main-content">{{ t('common.skip') }}</a>
+  <SiteHeader />
+  <RouterView v-slot="{ Component, route: viewRoute }">
+    <Transition :css="false" mode="out-in" @enter="routeMotion.enter" @leave="routeMotion.leave"
+      @enter-cancelled="routeMotion.cancel" @leave-cancelled="routeMotion.cancel">
+      <component :is="Component" :key="viewRoute.path" />
+    </Transition>
+  </RouterView>
+  <SiteFooter />
+  <BackToTop />
   <dialog ref="dialog" class="preview-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-copy" @click="closeBackdrop" @keydown.tab="keepDialogFocus"><div class="dialog-content"><button class="icon-button dialog-close" type="button" :aria-label="t('common.close')" @click="dialog.close()"><X /></button><p class="eyebrow">DLIM HOME</p><h2 id="dialog-title">{{ t(dialogTitle) }}</h2><p id="dialog-copy">{{ t(dialogCopy) }}</p><button class="button button-dark" type="button" @click="dialog.close()">{{ t('common.understood') }}</button></div></dialog>
 </template>

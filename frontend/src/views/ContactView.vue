@@ -1,4 +1,6 @@
 <script setup>
+import { usePageMotion } from '../composables/usePageMotion'
+const motionRoot = usePageMotion()
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Copy, Download, ArrowUpRight, ShoppingBag, Boxes, Check, MessageSquareText, Send, CheckCheck } from 'lucide-vue-next'
@@ -20,7 +22,7 @@ async function edit() { ready.value = false; await nextTick(); firstField.value?
 async function copy() { try { await navigator.clipboard.writeText(draft.value); copyState.value = 'copied' } catch { copyState.value = 'copyError' } }
 function download() { const url = URL.createObjectURL(new Blob([draft.value], { type: 'text/plain;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = 'DLIM-HOME-enquiry.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
 </script>
-<template><main id="main-content"><ContactNavigation /><PageHero page="contact" image="dining"><a href="#enquiry" class="button button-dark">{{ t('common.enquire') }}</a></PageHero>
+<template><main ref="motionRoot" id="main-content"><ContactNavigation /><PageHero page="contact" image="dining"><a href="#enquiry" class="button button-dark">{{ t('common.enquire') }}</a></PageHero>
 <section id="stores" class="section-space section-muted"><div class="container">
  <div class="section-heading"><p class="eyebrow">{{ t('business.label') }}</p><h2>{{ t('business.title') }}</h2><p class="lead">{{ t('business.intro') }}</p></div>
  <div class="contact-paths">

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './style.css'
 import App from './App.vue'
+import { ScrollTrigger, waitForPage, reducedMotion, scrollToAnchor, stopAnchorScroll } from './motion/gsap'
 import HomeView from './views/HomeView.vue'
 import ProductsView from './views/ProductsView.vue'
 import FactoryView from './views/FactoryView.vue'
@@ -25,11 +26,21 @@ const router = createRouter({
   { path: '/product/:handle', component: ProductView, meta: { titleKey: 'nav.products' } },
   { path: '/:pathMatch(.*)*', component: NotFoundView, meta: { titleKey: 'common.missing' } },
  ],
- scrollBehavior(to, from, savedPosition) {
+ async scrollBehavior(to, from, savedPosition) {
+  await waitForPage(to.path, () => router.currentRoute.value.fullPath === to.fullPath)
+  if (router.currentRoute.value.fullPath !== to.fullPath) return false
   if (savedPosition) return { ...savedPosition, behavior: 'instant' }
-  if (to.hash) return { el: to.hash, top: 110, behavior: to.path !== from.path || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }
+  if (to.hash) {
+   const target = document.getElementById(to.hash.slice(1))
+   if (!target) return false
+   if (to.path === from.path && !reducedMotion()) { scrollToAnchor(target); return false }
+   return { el: target, top: 110, behavior: 'instant' }
+  }
   if (to.path === from.path) return false
   return { top: 0, left: 0, behavior: 'instant' }
  },
 })
+// ScrollTrigger refreshes must preserve Vue Router's ownership of history scroll.
+ScrollTrigger.clearScrollMemory('manual')
+router.beforeEach(() => { stopAnchorScroll() })
 createApp(App).use(router).mount('#app')

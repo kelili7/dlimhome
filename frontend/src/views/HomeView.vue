@@ -1,4 +1,6 @@
 <script setup>
+import { usePageMotion } from '../composables/usePageMotion'
+const motionRoot = usePageMotion()
 import { Sparkles, Shapes, Layers, Flame, Coffee, Package, Globe2, ArrowUpRight, CircleCheck, ChevronRight } from 'lucide-vue-next'
 import { homeProducts, guides, values } from '../data/site'
 import { useLocale } from '../composables/useLocale'
@@ -10,7 +12,7 @@ const { t, tx } = useLocale()
 const icons = { Shapes, Layers, Flame, Coffee, Package, Globe2 }
 const benefits = [Shapes, Coffee, Globe2]
 </script>
-<template><main id="main-content">
+<template><main ref="motionRoot" id="main-content">
 <section class="hero container" aria-labelledby="hero-title"><div class="hero-content"><div class="rating-badge"><span class="rating-star ceramic-badge"><Sparkles :size="15" /></span><span>{{ t('home.badge') }}</span></div><h1 id="hero-title">{{ t('home.title') }}</h1><ul class="hero-benefits"><li v-for="(benefit, i) in t('home.benefits')" :key="i"><component :is="benefits[i]" :size="20" :stroke-width="1.5" /><span>{{ benefit }}</span></li></ul><div class="hero-pricing"><div><p><strong>{{ t('home.promise') }}</strong></p><small>{{ t('home.promiseSub') }}</small></div><RouterLink to="/products" class="button button-dark">{{ t('common.explore') }}</RouterLink></div><RouterLink to="/about" class="info-card"><img class="info-card-logo" src="/images/brand/dlim-home.svg" alt="DLIM HOME" width="912" height="612" /><span><strong>{{ t('home.info') }}</strong><small><CircleCheck :size="14" />{{ t('home.infoLink') }}</small></span><ArrowUpRight :size="20" /></RouterLink></div><ProductMarquee /></section>
 <section id="products" class="products-section section-space" aria-labelledby="products-title"><div class="container"><div class="section-heading"><p class="eyebrow">{{ t('home.productsLabel') }}</p><h2 id="products-title">{{ t('home.productsTitle') }}</h2></div><div class="products-grid"><ProductCard v-for="product in homeProducts" :key="product.handle" :product="product" /></div></div></section>
 <section id="craft" class="weight-loss section-muted section-space" aria-labelledby="craft-title"><div class="container two-columns"><div class="weight-loss-content"><h2 id="craft-title">{{ t('home.factoryTitle') }}</h2><ul class="plan-features"><li v-for="(feature, i) in t('home.factoryFeatures')" :key="i"><component :is="[Shapes, Layers, Package][i]" :stroke-width="1.5" /><span>{{ feature }}</span></li></ul><div class="button-row"><RouterLink to="/factory" class="button button-dark">{{ t('common.factory') }}</RouterLink><GradientButton to="/contact/business-enquiry">{{ t('common.enquire') }}</GradientButton></div><p class="fine-print">{{ t('home.factoryNote') }}</p></div><img class="weight-loss-image" src="/images/ceramics/craft.jpg" :alt="t('common.imageNote')" loading="lazy" width="640" height="640" /></div></section>

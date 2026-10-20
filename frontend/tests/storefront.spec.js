@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { openPage } from './helpers/navigation.js'
+import { openPage, ensureEnglish } from './helpers/navigation.js'
 
 test('landing page renders all sections and local images without runtime errors', async ({ page }, testInfo) => {
   const errors = []
@@ -83,7 +83,7 @@ test('product links support reloads, back navigation and unknown routes', async 
   await expect(page).toHaveURL(/\/product\/heart-coffee-cups$/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.reload()
-  await page.getByRole('button', { name: '切换至英文' }).click()
+  await ensureEnglish(page)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Heart Detail Coffee Cups')
   await page.getByRole('link', { name: 'Back to products' }).click()
   await expect(page).toHaveURL('/')

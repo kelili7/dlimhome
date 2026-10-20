@@ -1,4 +1,6 @@
 <script setup>
+import { usePageMotion } from '../composables/usePageMotion'
+const motionRoot = usePageMotion()
 import { Building2, MapPin, Shapes, Layers, Factory, BadgeCheck, Leaf, Coffee, House, Globe2, Store } from 'lucide-vue-next'
 import EditorialCardHeader from '../components/EditorialCardHeader.vue'
 import { brandValues } from '../data/site'
@@ -13,7 +15,7 @@ const valueIcons = [Leaf, Coffee, House]
 const marketIcons = [Globe2, Store]
 </script>
 <template>
- <main id="main-content">
+ <main ref="motionRoot" id="main-content">
   <PageHero page="about" image="gathering"><GradientButton to="/products">{{ t('common.explore') }}</GradientButton></PageHero>
   <section id="company-background" class="section-space section-muted">
    <div class="container">
