@@ -472,7 +472,7 @@ figcaption { font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 
 .company-intro .lead { margin-block: 20px 24px; color: hsl(var(--body-ink)); }
 .company-intro .body-copy { padding-top: 24px; border-top: 1px solid hsl(var(--ceramic-border)); color: hsl(var(--body-ink)); }
 .company-intro h2 { white-space: pre-line; }
-.company-name { font-size: 23px; line-height: 1.5; }
+.company-name img { display: block; width: 128px; max-width: 100%; height: auto; }
 .body-copy { font-size: 16px; line-height: 1.85; color: hsl(var(--muted-foreground)); }
 .company-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 28px 0; margin-block: 48px; border-radius: 24px; background: hsl(var(--card)); }
 .company-facts > div { padding-inline: 30px; }
@@ -559,7 +559,7 @@ figcaption { font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 
  .faq-contact-action { padding: 0 0 26px 18px; }
  .company-intro { padding: 28px 24px; gap: 28px; }
  .company-intro-label { margin-bottom: 20px; }
- .company-name { font-size: 21px; }
+ .company-name img { width: 112px; }
  .contact-paths { grid-template-columns: 1fr; }
  .contact-path { padding: 28px 24px; }
  .contact-path h3 { font-size: 32px; }

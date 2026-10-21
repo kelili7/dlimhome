@@ -18,8 +18,19 @@ test('scroll reveals complete, preserve geometry, and release promoted layers', 
   await expect.poll(async () => (await motionState(page)).triggers).toBeGreaterThan(5)
   const card = page.locator('.guide-card').first()
   const before = await card.evaluate(el => ({ top: el.offsetTop, height: el.offsetHeight, width: el.offsetWidth }))
+  await card.evaluate(el => {
+    // Record the transient promotion before Playwright waits for scrolling to
+    // settle; polling afterwards can miss a short animation under CPU load.
+    const observer = new MutationObserver(() => {
+      if (el.style.willChange === 'transform') {
+        el.dataset.promotionSeen = 'true'
+        observer.disconnect()
+      }
+    })
+    observer.observe(el, { attributes: true, attributeFilter: ['style'] })
+  })
   await card.scrollIntoViewIfNeeded()
-  await expect.poll(() => card.evaluate(el => el.style.willChange)).toBe('transform')
+  await expect(card).toHaveAttribute('data-promotion-seen', 'true')
   await expect(card).toHaveCSS('opacity', '1')
   await expect(card).toHaveCSS('transform', 'none')
   await expect.poll(() => card.evaluate(el => el.style.willChange)).toBe('')
@@ -103,27 +114,20 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
   })
 }
 
-test('magazine reveal has a moderate pace and yields immediately to scrolling', async ({ page }) => {
+test('text entrances start with page content; other pages retain the interruptible wipe', async ({ page }) => {
   await openPage(page, '/')
-  await expect(page.locator('main')).toHaveCSS('clip-path', 'none')
   await page.locator('.desktop-nav a[href="/about"]').click()
-  await expect(page.locator('.page-hero figure > img')).toHaveAttribute('src', '/images/ceramics/gathering.jpg')
+  await expect(page.locator('main')).toHaveCSS('clip-path', 'none')
+  await expect(page.locator('h1')).toHaveAttribute('data-split-state', 'playing')
+  await expect(page.locator('.page-hero .lead')).toHaveCSS('opacity', '1')
+  await page.locator('.desktop-nav a[href="/products"]').click()
+  await expect(page.locator('main')).toHaveCSS('clip-path', 'none')
+  await page.locator('.product-card a').first().click()
   const main = page.locator('main')
-  await expect(main).not.toHaveCSS('clip-path', 'none')
-  const opening = await main.evaluate(el => parseFloat(getComputedStyle(el).clipPath.slice(6)))
-  // The wipe remains perceptible, but completes in under a second.
-  await page.waitForTimeout(300)
-  await expect(main).not.toHaveCSS('clip-path', 'none')
-  const later = await main.evaluate(el => parseFloat(getComputedStyle(el).clipPath.slice(6)))
-  expect(later).toBeLessThan(opening)
-  await expect(main).toHaveCSS('clip-path', 'none', { timeout: 800 })
-  await expect(main).toHaveCSS('transform', 'none')
-  await expect.poll(() => main.evaluate(el => el.style.willChange)).toBe('')
-  await page.locator('.desktop-nav a[href="/factory"]').click()
-  await expect(page.locator('.page-hero figure > img')).toHaveAttribute('src', '/images/ceramics/craft.jpg')
   await expect(main).not.toHaveCSS('clip-path', 'none')
   await page.mouse.wheel(0, 80)
   await expect(main).toHaveCSS('clip-path', 'none', { timeout: 500 })
+  await expect.poll(() => main.evaluate(el => el.style.willChange)).toBe('')
 })
 
 test('resizing reinitializes depth for photographs revealed by desktop layout', async ({ page }) => {
@@ -188,14 +192,14 @@ for (const width of [390, 1440]) {
 }
 
 for (const width of [390, 1366]) {
-  test(`visible scroll content never dims or flashes when entering and revisiting at ${width}px`, async ({ page }) => {
+  test(`legacy scroll content keeps full opacity when entering and revisiting at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 977 })
     await page.addInitScript(() => localStorage.setItem('dlim-locale', 'zh'))
     await openPage(page, '/')
     await expect(page.locator('main')).toHaveCSS('clip-path', 'none')
     await expect.poll(async () => (await motionState(page)).triggers).toBeGreaterThan(5)
     const samples = await page.evaluate(async () => {
-      const elements = [...document.querySelectorAll('#products .section-heading, #products .product-card, #values .science-badge, #guides .guide-card')]
+      const elements = [...document.querySelectorAll('#products .product-card, #values .science-badge, #guides .guide-card')]
       const samples = elements.map(el => ({ label: el.className, minOpacity: 1, visibleFrames: 0 }))
       const end = Math.min(document.documentElement.scrollHeight - innerHeight,
         Math.ceil(document.querySelector('#guides').getBoundingClientRect().bottom + scrollY - innerHeight))

@@ -42,9 +42,15 @@ test('legacy contact URLs preserve product context, enquiry type and anchors', a
 
 test('background and careers include bilingual content and requested application details', async ({ page }) => {
  await openPage(page, '/about')
- await expect(page.locator('#company-background')).toContainText('DLIM Home')
+ await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+ const brand = page.locator('.company-name img')
+ await expect(brand).toHaveAttribute('src', '/images/brand/dlim-home.svg')
+ await expect(brand).toHaveAccessibleName('DLIM Home')
+ await expect.poll(() => brand.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true)
  await page.getByRole('button', { name: 'Switch to Chinese' }).click()
- await expect(page.locator('#company-background')).toContainText('DLIM Home')
+ await page.reload()
+ await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
+ await expect(brand).toHaveAccessibleName('DLIM Home')
  await expect(page.locator('#company-background')).toContainText('私模自主研发')
  await expect(page.locator('#company-background')).toContainText('鞋服配饰')
  await openPage(page, '/contact/join-us')

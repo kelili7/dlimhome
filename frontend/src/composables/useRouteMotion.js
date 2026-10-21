@@ -19,6 +19,9 @@ export function useRouteMotion() {
     if (!entering) pageLeaving(element)
     // Vue's out-in transition must finish its patch before releasing the next page.
     if (reducedMotion()) { queueMicrotask(done); return }
+    // Component entrances start alongside the page content. A full-page wipe
+    // would conceal the beginning of the text/block animations.
+    if (entering && element.querySelector('[data-animated-content], [data-split-text]')) { queueMicrotask(done); return }
     const context = gsap.context(() => {}, element)
     const finish = () => {
       cancel(element)

@@ -4,7 +4,7 @@ import { gsap, ScrollTrigger, pageMounted } from '../motion/gsap'
 import { createPageParallax } from '../motion/pageParallax'
 import { motionTiming } from '../motion/settings'
 
-// Use existing blocks: no wrappers, text splitting, pin spacers or layout changes.
+// Existing block reveals defer to explicitly animated text/content.
 const revealSelector = [
   '.section-heading', '.two-columns > *', '.products-grid > *',
   '.science-grid > *', '.guide-grid > *', '.carousel-layout > *',
@@ -61,7 +61,7 @@ export function usePageMotion() {
               return box.height > 0 && box.bottom > 0 && box.top < innerHeight
             }
             const hero = root.querySelector('.hero, .page-hero, .product-detail') || (root.matches('.not-found') ? root : null)
-            const copy = [...root.querySelectorAll('.hero-content > *, .page-hero > div > *, .product-detail .two-columns > *, .not-found > *')].filter(visible)
+            const copy = [...root.querySelectorAll('.hero-content > *, .page-hero > div > *, .product-detail .two-columns > *, .not-found > *')].filter(element => !element.closest('[data-animated-content], [data-split-text]') && visible(element))
             // The route mask handles the reveal; do not dim visible content again.
             if (playIntro && copy.length) {
               gsap.timeline({ defaults: { duration: mobile ? motionTiming.introMobile : motionTiming.intro,
@@ -95,7 +95,7 @@ export function usePageMotion() {
               for (const trigger of triggers) {
                 if (!trigger.trigger.isConnected) { trigger.kill(); triggers.delete(trigger) }
               }
-              const candidates = [...root.querySelectorAll(revealSelector)].filter(element => !hero?.contains(element) && !parallaxImages.has(element))
+              const candidates = [...root.querySelectorAll(revealSelector)].filter(element => !element.closest('[data-animated-content], [data-split-text]') && !element.querySelector('[data-split-text]') && !hero?.contains(element) && !parallaxImages.has(element))
               const candidatesSet = new Set(candidates)
               const targets = candidates.filter(element => {
                 for (let parent = element.parentElement; parent && parent !== root; parent = parent.parentElement) {

@@ -3,14 +3,17 @@ import { openPage } from './helpers/navigation.js'
 
 async function checkAlignment(region, width) {
   if (width < 768) return
-  const rows = await region.locator('.packaging-card').evaluateAll(cards => cards.map(card => ({
-    bottom: card.getBoundingClientRect().bottom,
-    imageBottom: card.querySelector('img').getBoundingClientRect().bottom,
-    copyTop: card.querySelector('.packaging-copy p').getBoundingClientRect().top,
-  })))
-  for (const key of ['bottom', 'imageBottom', 'copyTop']) {
-    expect(Math.max(...rows.map(row => row[key])) - Math.min(...rows.map(row => row[key]))).toBeLessThanOrEqual(1)
-  }
+  // A viewport update can resolve before its media-query reflow is painted.
+  // Keep the 1px requirement, but measure the settled responsive layout.
+  await expect.poll(async () => {
+    const rows = await region.locator('.packaging-card').evaluateAll(cards => cards.map(card => ({
+      bottom: card.getBoundingClientRect().bottom,
+      imageBottom: card.querySelector('img').getBoundingClientRect().bottom,
+      copyTop: card.querySelector('.packaging-copy p').getBoundingClientRect().top,
+    })))
+    return Math.max(...['bottom', 'imageBottom', 'copyTop'].map(key =>
+      Math.max(...rows.map(row => row[key])) - Math.min(...rows.map(row => row[key]))))
+  }).toBeLessThanOrEqual(1)
 }
 
 async function captureSection(page, region, path) {
