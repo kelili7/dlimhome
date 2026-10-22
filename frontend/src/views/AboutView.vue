@@ -1,5 +1,6 @@
 <script setup>
 import SplitText from '../components/SplitText.vue'
+import WorldMapDemo from '../components/WorldMapDemo.vue'
 import { usePageMotion } from '../composables/usePageMotion'
 const motionRoot = usePageMotion()
 import { Building2, MapPin, Shapes, Layers, Factory, BadgeCheck, Leaf, Coffee, House, Globe2, Store } from 'lucide-vue-next'
@@ -26,7 +27,7 @@ const marketIcons = [Globe2, Store]
     </div>
     <dl class="company-facts"><div v-for="(fact, i) in t('background.facts')" :key="fact.label"><dt><component :is="factIcons[i]" :size="18" :stroke-width="1.5" aria-hidden="true" />{{ fact.label }}</dt><dd>{{ fact.value }}</dd></div></dl>
     <div class="values-grid"><article v-for="(item, i) in t('background.pillars')" :key="item.title" class="editorial-card editorial-card--illustrated"><EditorialCardHeader :number="`0${i + 1}`" :icon="pillarIcons[i]" /><h3>{{ item.title }}</h3><p>{{ item.text }}</p></article></div>
-    <div class="company-markets"><p class="eyebrow">{{ t('background.marketsLabel') }}</p><SplitText tag="h3" :text="t('background.marketsTitle')" /><div class="two-columns"><article v-for="(market, i) in t('background.markets')" :key="market.label"><div class="market-heading"><p class="eyebrow">{{ market.label }}</p><component :is="marketIcons[i]" :size="28" :stroke-width="1.3" aria-hidden="true" /></div><h4>{{ market.title }}</h4><p class="body-copy">{{ market.text }}</p></article></div></div>
+    <div class="company-markets"><p class="eyebrow">{{ t('background.marketsLabel') }}</p><SplitText tag="h3" :text="t('background.marketsTitle')" /><div class="two-columns"><article v-for="(market, i) in t('background.markets')" :key="market.label"><div class="market-heading"><p class="eyebrow">{{ market.label }}</p><component :is="marketIcons[i]" :size="28" :stroke-width="1.3" aria-hidden="true" /></div><h4>{{ market.title }}</h4><p class="body-copy">{{ market.text }}</p></article></div><WorldMapDemo /></div>
    </div>
   </section>
   <section class="section-space"><div class="container two-columns"><img class="editorial-image" src="/images/ceramics/ritual.jpg" :alt="t('common.imageNote')" loading="lazy" width="640" height="640" /><div><p class="eyebrow">{{ t('about.storyLabel') }}</p><SplitText tag="h2" :text="t('about.storyTitle')" /><p class="lead">{{ t('about.storyCopy') }}</p><RouterLink to="/factory" class="text-link">{{ t('common.factory') }} ↗</RouterLink></div></div></section>

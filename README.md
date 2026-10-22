@@ -122,6 +122,21 @@ npm run test:e2e
 - 加入我们提供加入理由、员工福利、招聘流程及简历投递四个板块，投递地址为 `hr@dlim.com`。邮件链接打开邮件客户端，网站不直接收集或发送简历。
 - 新增中英文文案维护在 `frontend/src/data/companyMessages.js`；企业资料来源及未确认信息见 `frontend/CONTENT_SOURCES.md`。
 
+### 业务布局世界地图
+
+关于我们页面的两张业务卡片下方使用 `frontend/src/components/WorldMapDemo.vue`，
+根据 [Aceternity UI World Map](https://ui.aceternity.com/components/world-map) 与
+[官方 registry 源码](https://ui.aceternity.com/registry/world-map-demo.json) 适配为 Vue 3。
+保留点阵底图、渐变弧线、错峰绘制和节点脉冲，沿用现有 CSS 主题与中英文文案。
+连接线仅示意深圳与欧美市场的关系，不代表办公室位置或实际物流路线。
+
+官方的 React Motion / next-themes 逻辑改为 Vue 生命周期与 CSS 动画，无需新增 React、Next.js 或 Tailwind。
+地图进入视口后绘制一次，离屏暂停；节点脉冲播放三轮后停止，系统减少动态效果设置实时切换为静态图。
+`dotted-map` 作为开发依赖预生成静态 SVG 和使用相同投影的节点坐标，生产浏览器不加载国家数据或计算底图。
+修改节点或底图参数后，在 `frontend/` 运行 `npm run generate:world-map`，并同时提交
+`src/assets/world-map.svg`、`src/data/worldMap.json`。生成脚本位于 `frontend/scripts/generate-world-map.mjs`。
+`frontend/tests/world-map.spec.js` 覆盖插入位置、地图加载、绘制结果、双语、窄屏和减少动态效果。
+
 ## 首页标语与回到顶部
 
 - 首页标语为“让世界每一个角落，都有DLIM HOME的温暖陪伴”，英文同步更新。

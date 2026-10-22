@@ -8,6 +8,11 @@ export const companyMessages = {
       copy: 'DLIM Home brings together product development, manufacturing and e-commerce. Based in Shenzhen, we focus on distinctive ceramic homeware, with independently developed designs and proprietary moulds.',
       detail: 'With our own product development and production supply chain, we connect original ideas with everyday use. Operations, marketing, design and customer service teams work together to build differentiated products and independent brands through compliant, quality-focused e-commerce.',
       facts: [{ label: 'Our base', value: 'Shenzhen, China' }, { label: 'Our model', value: 'Development, manufacturing & trade' }, { label: 'Our focus', value: 'Original ceramic homeware' }],
+      mapLabel: 'CONNECTED THROUGH EVERYDAY LIFE',
+      mapTitle: 'From Shenzhen to everyday tables.',
+      mapCopy: 'Rooted in China, connecting ceramic homeware with everyday life across Europe and North America.',
+      mapAlt: 'Dotted world map with illustrative connections from Shenzhen to Europe and North America.',
+      mapCaption: 'Market connections illustrated · China / Europe / North America',
       marketsLabel: 'OUR BUSINESS', marketsTitle: 'Different markets. A shared product mindset.',
       markets: [
         { label: 'OVERSEAS / CERAMIC HOMEWARE', title: 'From our collections to everyday tables.', text: 'Our overseas business centres on Amazon in Europe and North America, with a particular focus on North American homeware consumers. Ceramic kitchen and tableware collections are supported by quality-focused, compliant operations and FBA fulfilment.' },
@@ -87,6 +92,11 @@ export const companyMessages = {
       copy: 'DLIM Home 立足深圳，将产品研发、生产供应链与电商运营连接起来。我们聚焦家居陶瓷精品赛道，坚持私模自主研发，以差异化产品连接真实的生活需求。',
       detail: '我们拥有自主产品研发与生产供应链，围绕烤盘、餐碟、玉米饼盘等餐厨陶瓷产品，将原创设计、工艺细节与日常使用连接起来。运营、推广、设计与客服团队协同配合，秉持合规精品运营理念，持续打造具有竞争力的自主品牌。',
       facts: [{ label: '企业所在地', value: '中国 · 深圳' }, { label: '业务模式', value: '研发 · 生产 · 电商' }, { label: '产品方向', value: '私模研发 · 家居陶瓷精品' }],
+      mapLabel: '连接海内外的日常',
+      mapTitle: '从深圳出发，走进更多日常。',
+      mapCopy: '立足中国，连接欧洲与北美市场，让用心打造的家居陶瓷走进日常生活。',
+      mapAlt: '点阵世界地图，以弧线示意深圳与欧洲、北美市场的连接。',
+      mapCaption: '市场连接示意 · 中国 / 欧洲 / 北美',
       marketsLabel: '业务布局', marketsTitle: '不同的市场，同样用心的产品思维。',
       markets: [
         { label: '海外 / 家居陶瓷', title: '让餐厨器物，走进更多日常。', text: '以亚马逊欧美区为核心，深耕北美家居消费市场，聚焦烤盘、餐碟、玉米饼盘等餐厨陶瓷产品，采用 FBA 精品运营模式，坚持合规经营与长期品牌建设。' },
