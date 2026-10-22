@@ -1,10 +1,8 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { CustomEase } from 'gsap/CustomEase'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
-gsap.registerPlugin(ScrollTrigger, CustomEase, ScrollToPlugin)
-CustomEase.create('dlim-reveal', '0.25,0.46,0.45,0.94')
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 export { gsap, ScrollTrigger }
 export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches

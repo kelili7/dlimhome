@@ -37,10 +37,11 @@ for (const width of [390, 768, 1440]) {
 test(`homepage uses a single entrance per block and preserves layout at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 844 })
   await openPage(page, '/')
-  await expect(page.locator('[data-animated-content]')).toHaveCount(4)
-  const block = page.locator('.weight-loss-content')
+  await expect(page.locator('[data-animated-content]')).toHaveCount(11)
+  const container = page.locator('.weight-loss-content')
+  const block = container.locator(':scope > h2')
   await expect.poll(() => block.evaluate(el => getComputedStyle(el).transform)).not.toBe('none')
-  await expect.poll(() => block.evaluate(async el => {
+  await expect.poll(() => container.evaluate(async el => {
     const { ScrollTrigger } = await import('/src/motion/gsap.js')
     return ScrollTrigger.getAll().filter(t => t.trigger === el).length
   })).toBe(1)
@@ -119,13 +120,14 @@ for (const width of [390, 1440]) {
   test(`official fade and 100px slide stay synchronized and do not replay at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
     await openPage(page, '/')
-    const block = page.locator('#values .section-heading')
+    const container = page.locator('#values .section-heading')
+    const block = container.locator(':scope > h2')
     await expect(block).toHaveCSS('opacity', '0')
-    await expect.poll(() => block.evaluate(async el => {
+    await expect.poll(() => container.evaluate(async el => {
       const { ScrollTrigger } = await import('/src/motion/gsap.js')
       return ScrollTrigger.getAll().filter(t => t.trigger === el).length
     })).toBe(1)
-    const samples = await block.evaluate(async el => {
+    const samples = await container.evaluate(async el => {
       const { ScrollTrigger } = await import('/src/motion/gsap.js')
       const trigger = ScrollTrigger.getAll().find(t => t.trigger === el)
       window.scrollTo({ top: trigger.start + 30, behavior: 'instant' })
@@ -133,7 +135,7 @@ for (const width of [390, 1440]) {
       const start = performance.now()
       while (performance.now() - start < 1000) {
         await new Promise(requestAnimationFrame)
-        const style = getComputedStyle(el)
+        const style = getComputedStyle(el.firstElementChild)
         samples.push({ opacity: Number(style.opacity), y: new DOMMatrixReadOnly(style.transform).m42 })
       }
       return samples
@@ -157,7 +159,7 @@ for (const width of [390, 1440]) {
 test('returning home does not cover AnimatedContent with the legacy route wipe', async ({ page }) => {
   await openPage(page, '/about')
   await page.locator('.desktop-nav a[href="/"]').click()
-  await expect(page.locator('[data-animated-content]')).toHaveCount(4)
+  await expect(page.locator('[data-animated-content]')).toHaveCount(11)
   const clips = await page.locator('main').evaluate(async el => {
     const clips = []
     const start = performance.now()
@@ -169,3 +171,150 @@ test('returning home does not cover AnimatedContent with the legacy route wipe',
   })
   expect(clips.every(value => value === 'none')).toBe(true)
 })
+
+test('homepage Rise matches the official 0.08s child stagger and power3.out trajectory', async ({ page }) => {
+  await openPage(page, '/')
+  const result = await page.locator('.products-grid').evaluate(async el => {
+    const { gsap, ScrollTrigger } = await import('/src/motion/gsap.js')
+    const children = Array.from(el.children)
+    const timeline = gsap.globalTimeline.getChildren(false, false, true).find(timeline =>
+      timeline.getChildren(true, true, false).some(tween => tween.targets().includes(children[0])))
+    const duration = timeline.duration()
+    const samples = [0.04, 0.12, 0.4, 0.72].map(time => {
+      timeline.pause(time)
+      return { time, states: children.map(child => ({
+        opacity: Number(getComputedStyle(child).opacity),
+        y: new DOMMatrixReadOnly(getComputedStyle(child).transform).m42,
+      })) }
+    })
+    const childTriggers = ScrollTrigger.getAll().filter(t => children.includes(t.trigger)).length
+    return { duration, samples, childTriggers, count: children.length }
+  })
+  expect(result.duration).toBeCloseTo(0.8 + (result.count - 1) * 0.08, 5)
+  expect(result.childTriggers).toBe(0) // No legacy batch entrance on the same cards.
+  for (const sample of result.samples) {
+    sample.states.forEach((state, index) => {
+      const progress = Math.min(1, Math.max(0, (sample.time - index * 0.08) / 0.8))
+      const opacity = 1 - (1 - progress) ** 4 // GSAP power3.out
+      expect(state.opacity).toBeCloseTo(opacity, 3)
+      expect(state.y).toBeCloseTo(100 * (1 - opacity), 2)
+    })
+  }
+})
+
+test('blur, rotate, tilt and wipe use the official start pose and clear after entry', async ({ page }) => {
+  await openPage(page, '/')
+  const block = await mountExample(page, {
+    trigger: 'mount', delay: 0.5, duration: 0.2, blur: 12, rotate: 15, tilt: 60, wipe: 'up',
+  })
+  const pose = await block.evaluate(async el => {
+    const { gsap } = await import('/src/motion/gsap.js')
+    return { blur: getComputedStyle(el).filter, mask: getComputedStyle(el).maskImage,
+      rotation: gsap.getProperty(el, 'rotation'), tilt: gsap.getProperty(el, 'rotationX'),
+      perspective: gsap.getProperty(el, 'transformPerspective'), wipe: el.style.getPropertyValue('--ac-wipe') }
+  })
+  expect(pose.blur).toBe('blur(12px)')
+  expect(pose.mask).toContain('linear-gradient')
+  expect(pose.rotation).toBe(15)
+  expect(pose.tilt).toBe(60)
+  expect(pose.perspective).toBe(900)
+  expect(pose.wipe).toBe('0')
+  await expect.poll(() => page.evaluate(() => window.acEvents)).toEqual(['complete'])
+  await expect(block).toHaveCSS('filter', 'none')
+  await expect(block).toHaveCSS('mask-image', 'none')
+  await expect(block).toHaveCSS('transform', 'none')
+})
+
+test('once=false reverses on leave and replays without scheduling disappearance', async ({ page }) => {
+  await openPage(page, '/')
+  const block = await mountExample(page, { once: false, duration: 0.15, wipe: 'up', disappearAfter: 0.1 }, true)
+  const host = page.locator('#animated-content-test')
+  await expect(block).toHaveCSS('opacity', '0')
+  await host.evaluate(el => { el.scrollTop = 550 })
+  await expect(block).toHaveCSS('opacity', '1')
+  await host.evaluate(el => { el.scrollTop = 0 })
+  await expect(block).toHaveCSS('opacity', '0')
+  await expect(block).not.toHaveCSS('mask-image', 'none')
+  await host.evaluate(el => { el.scrollTop = 550 })
+  await expect(block).toHaveCSS('opacity', '1')
+  await expect.poll(() => page.evaluate(() => window.acEvents)).toEqual(['complete', 'complete'])
+  await page.waitForTimeout(700)
+  await expect(block).toHaveCSS('opacity', '1')
+})
+
+test('scrub follows the custom scroller in both directions and ignores entry delay', async ({ page }) => {
+  await openPage(page, '/')
+  const block = await mountExample(page, { scrub: true, delay: 5, disappearAfter: 0.1 }, true)
+  await expect.poll(() => block.evaluate(async el => {
+    const { ScrollTrigger } = await import('/src/motion/gsap.js')
+    return ScrollTrigger.getAll().some(t => t.trigger === el)
+  })).toBe(true)
+  for (const progress of [0.5, 1, 0]) {
+    await block.evaluate(async (el, progress) => {
+      const { ScrollTrigger } = await import('/src/motion/gsap.js')
+      const trigger = ScrollTrigger.getAll().find(t => t.trigger === el)
+      document.querySelector('#animated-content-test').scrollTop = trigger.start + (trigger.end - trigger.start) * progress
+      ScrollTrigger.update()
+    }, progress)
+    const expected = 1 - (1 - progress) ** 4
+    await expect.poll(() => block.evaluate(el => Number(getComputedStyle(el).opacity))).toBeCloseTo(expected, 2)
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(block).toHaveCSS('opacity', '1')
+  await expect(block).toHaveCSS('transform', 'none')
+})
+
+for (const width of [390, 1366]) {
+  test(`returning home replays the hero entrance without splitting text at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 977 })
+    for (const path of ['/products', '/about']) {
+      await openPage(page, path)
+      await page.evaluate(() => {
+        window.heroSamples = new Promise(resolve => {
+          const samples = []
+          let started
+          const read = () => {
+            const heading = document.querySelector('#hero-title')
+            if (heading && started == null) started = performance.now()
+            if (heading) {
+              const visual = document.querySelector('.hero-visual')
+              const copyStyle = getComputedStyle(heading)
+              const imageStyle = getComputedStyle(visual)
+              samples.push({
+                opacity: Number(copyStyle.opacity), y: new DOMMatrixReadOnly(copyStyle.transform).m42,
+                imageOpacity: Number(imageStyle.opacity), imageY: new DOMMatrixReadOnly(imageStyle.transform).m42,
+                clip: getComputedStyle(document.querySelector('main')).clipPath,
+              })
+            }
+            if (started != null && performance.now() - started > 1400) resolve(samples)
+            else requestAnimationFrame(read)
+          }
+          requestAnimationFrame(read)
+        })
+      })
+      await page.getByRole('banner').getByRole('link', { name: 'DLIM HOME', exact: true }).click()
+      await expect(page).toHaveURL('/')
+      const samples = await page.evaluate(() => window.heroSamples)
+      expect(samples.some(s => s.opacity > 0 && s.opacity < 0.9 && s.y > 10)).toBe(true)
+      for (const sample of samples) {
+        expect(sample.clip).toBe('none')
+        expect(Math.abs(sample.y - 100 * (1 - sample.opacity))).toBeLessThan(0.15)
+      }
+      if (width >= 1024) {
+        expect(samples.some(s => s.imageOpacity > 0 && s.imageOpacity < 0.9 && s.imageY > 10)).toBe(true)
+        await expect(page.locator('.hero-visual')).toHaveCSS('opacity', '1')
+        await expect(page.locator('.hero-visual')).toHaveCSS('transform', 'none')
+      }
+      await expect(page.locator('#hero-title')).toHaveCSS('opacity', '1')
+      await expect(page.locator('#hero-title')).toHaveCSS('transform', 'none')
+      await expect(page.locator('#hero-title > *, [data-split-text]')).toHaveCount(0)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    }
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await openPage(page, '/products')
+    await page.getByRole('banner').getByRole('link', { name: 'DLIM HOME', exact: true }).click()
+    await expect(page.locator('#hero-title')).toHaveCSS('opacity', '1')
+    await expect(page.locator('#hero-title')).toHaveCSS('transform', 'none')
+    await expect(page.locator('.hero-visual')).toHaveCSS('transform', 'none')
+  })
+}

@@ -145,28 +145,32 @@ npm run test:e2e
 
 ## 页面动效
 
-全站使用 GSAP、ScrollTrigger、ScrollToPlugin 和 CustomEase，保留原页面结构、内容与静止排版。
+全站使用 GSAP、ScrollTrigger 和 ScrollToPlugin，保留原页面内容、静止排版与业务交互。
 
-- `frontend/src/motion/gsap.js` 统一注册插件与缓动曲线，并协调页面挂载和路由滚动恢复。
-- `frontend/src/composables/useRouteMotion.js` 提供 180ms 淡出、850ms 自下而上杂志揭幕；遮罩按当前视口计算，兼容历史滚动恢复。滚轮、触摸、阅读按键或内容获得焦点时立即完成揭幕；查询参数与同页锚点更新不会重播整页转场。
-- `frontend/src/composables/usePageMotion.js` 在 Vue 挂载后编排首屏图文、滚动区块和卡片错峰入场，卸载时清理 context、触发器与观察器。新增页面只需在现有 `main` 上绑定返回的 `motionRoot`。
-- `frontend/src/motion/pageParallax.js` 为场景照片添加轻微景深视差：桌面最大上下各 12px、手机各 6px，以 650ms / 500ms 的 scrub 缓动跟随滚动。照片轻微放大后用补偿遮罩保持原有显示边界，产品白底图与轮播不参与。
-- `frontend/src/motion/settings.js` 集中管理节奏：首屏约 750ms，滚动区块约 650ms（手机 550ms），错峰间隔 60ms。未使用 AnimatedContent 的原有区块保持完整亮度，只在屏幕外预置小幅位移再入场，避免先显示后突然变淡；已展示的内容不会因响应式断点变化重播。页面切换使用透明度与 clip-path，区块只移动 transform；普通区块不新增布局包裹或固定滚动区；批注标题使用下述 SplitText。系统开启“减少动态效果”时立即还原静态内容。
-- 同页锚点由 ScrollToPlugin 平滑定位，保留 URL、查询参数与浏览历史；用户手动滚动可中断。跨页锚点及历史返回立即恢复位置。
-- 图片加载、字体完成、筛选或 FAQ 高度变化后合并刷新触发位置；首页双列图片离屏或标签页隐藏时暂停。
-- `frontend/tests/motion.spec.js` 覆盖逐帧亮度稳定、断点切换不重播、揭幕节奏与中断、视差方向与图片显示边界、滚动入场、样式恢复、快速导航、动态筛选、减少动态效果及离屏暂停。
+- `frontend/src/components/AnimatedContent.vue` 统一负责内容与图片的上移淡入；页面中显式使用组件，避免自动扫描 DOM 叠加另一套动画。
+- 首页工艺图、各内页首屏图、场景图、产品图、包装卡片与办公环境照片均随所属内容组入场。旧照片视差、缩放裁切和小幅区块入场已移除，图片完成后恢复原尺寸。
+- `frontend/src/composables/usePageMotion.js` 保留页面挂载协调、锚点导航，以及字体、筛选、FAQ 高度变化后的触发位置刷新。
+- `frontend/src/composables/useRouteMotion.js` 保留页面离开的 180ms 淡出；含内容动画的页面跳过整页遮罩，避免遮住入场开头。查询参数和同页锚点更新不会重播整页动画。
+- 同页锚点由 ScrollToPlugin 平滑定位，保留 URL、查询参数与浏览历史；跨页锚点及历史返回立即恢复位置。
+- 组件卸载会清理自身动画、触发器和监听器；系统减少动态效果设置实时恢复静态内容。键盘聚焦可立即显示内容，鼠标聚焦不会改变按下位置而吞掉点击。
+- 首页双列图片滚动、轮播切换、地图连线仍由各自组件负责，导航和页脚不额外添加入场。
+- `frontend/tests/page-entrances.spec.js` 覆盖桌面与手机上的全站图片/内容轨迹、尺寸、单次播放和减少动态效果；其他测试继续覆盖导航、历史、筛选、表单、FAQ 与轮播。
 
 ### AnimatedContent 内容入场
 
-`frontend/src/components/AnimatedContent.vue` 根据 [React Bits 官方源码入口](https://raw.githubusercontent.com/DavidHDev/react-bits/main/public/r/AnimatedContent-TS-CSS.json)
-适配为 Vue 3 插槽组件（核对日期：2026-10-21）。复用 npm 管理的 GSAP 3.15 和现有插件注册，
+`frontend/src/components/AnimatedContent.vue` 根据 [React Bits 官方 JS/CSS 源码入口](https://reactbits.dev/r/AnimatedContent-JS-CSS.json)
+适配为 Vue 3 插槽组件（核对日期：2026-10-22）。复用 npm 管理的 GSAP 3.15 和现有插件注册，
 无需运行面向 React 的 shadcn 安装命令。官方此版本没有独立 CSS、字体或图片依赖；组件继承现有 class、style 和原生属性。
 完整许可与版权保留于 `frontend/public/licenses/react-bits-LICENSE.md`，生产构建会将其复制到 `dist/licenses/`。
 
-首页三个区块标题和工厂文案均采用官方演示默认参数：从下方 100px 向上入场，透明度 0→1，时长 0.8 秒，缓动 `power3.out`，threshold 为 0.1。
-组件根节点替换原有 div，不新增布局层；`usePageMotion` 跳过其内部内容，避免重复入场。
+首页及产品、工厂、关于我们、服务支持、业务咨询、加入我们、产品详情和 404 页采用官网当前 **Scroll / Rise** 演示配置：从下方 100px 向上入场，透明度 0→1，时长 0.8 秒，缓动 `power3.out`，threshold 为 0.1，直接子元素间隔 `0.08` 秒。
+注意：组件源码的 `stagger` 默认值为 `0`，官网演示默认值为 `0.08`，页面显式传入后者。对照的是官网默认 Rise，不是可切换的 Blur / Flip / Spring 等预设。
+这些内容区标题作为整体入场，不再叠加 SplitText 逐字位移与淡入。首页首屏与产品页一致：左侧文案组按 0.08 秒错峰入场，右侧图片区域整体上移淡入；首次打开及从其他页面返回时均播放。主标题仍是普通 h1，整段入场而不逐字拆分，右侧图片原有循环滚动保留。官网预览容器的 Smooth Scroll 属于演示环境，不是 AnimatedContent 依赖，因此保留本站原生滚动和锚点行为。
+组件默认替换原有 div；Vue 扩展参数 `tag` 可保留 `img`、`figure`、`form`、`ol`、`dl` 等语义节点，不新增布局包裹。图片默认整体入场，列表和文案组显式设置 `stagger=0.08`。
+产品筛选结果以产品 handle 集合作为组件 key，结果变化时清理旧动画并注册新内容；输入框与筛选按钮保持原节点和焦点。
 包含 AnimatedContent 或 SplitText 的页面入场时跳过原有整页揭幕遮罩，确保文字与页面内容同步启动；其他页面转场及原有业务交互保留。
 起始位移和透明度在挂载时、浏览器首帧绘制前同步设置；只推迟滚动触发器的测量，等待路由恢复滚动位置，避免先显示再突然隐藏。
+图片及含图片的内容组在进入视口后等待加载与解码完成，再播放一次完整入场，避免慢加载时图片突然出现在动画中途。未进入视口的板块保留懒加载；图片失败不会阻塞其他内容，切换页面或启用减少动态效果会取消等待。`frontend/tests/image-loading.spec.js` 覆盖慢加载、解码、加载失败及卸载清理。
 
 ```vue
 <script setup>
@@ -175,7 +179,7 @@ import AnimatedContent from './components/AnimatedContent.vue'
 
 <template>
   <AnimatedContent :distance="100" :duration="0.8" ease="power3.out"
-    direction="vertical" :animate-opacity="true" :initial-opacity="0" :threshold="0.1">
+    direction="vertical" :animate-opacity="true" :initial-opacity="0" :threshold="0.1" :stagger="0.08">
     <!-- 原有内容 -->
   </AnimatedContent>
 </template>
@@ -185,19 +189,23 @@ import AnimatedContent from './components/AnimatedContent.vue'
 
 | 参数 | 默认值 | 行为 |
 | --- | --- | --- |
-| `container` | `null` | 自定义滚动容器元素或选择器；默认使用视口 |
+| `tag`（Vue 扩展） | `div` | 根 HTML 标签；`tag="img"` 原样透传 src、alt、尺寸及懒加载属性 |
+| `container` | `null` | 自定义滚动容器元素或选择器；未指定时查找 `snap-main-container`，否则使用视口 |
 | `distance` / `direction` / `reverse` | `100` / `vertical` / `false` | 起始位移、纵向或横向、反转方向 |
 | `duration` / `ease` / `delay` | `0.8` / `power3.out` / `0` | 入场时长、GSAP 缓动和延迟 |
 | `initialOpacity` / `animateOpacity` | `0` / `true` | 起始透明度及是否淡入 |
 | `scale` | `1` | 起始缩放，最终恢复为 1 |
+| `blur` / `rotate` / `tilt` | `0` / `0` / `0` | 起始模糊 px、旋转角度和 3D 翻转角度 |
+| `wipe` | `none` | 柔边遮罩：`up` / `down` / `left` / `right` / `center` |
+| `stagger` / `staggerFrom` | `0` / `start` | 直接子元素错峰秒数及顺序 |
+| `once` / `scrub` | `true` / `false` | 是否只播一次；是否随滚动进度播放（数字指定平滑秒数） |
 | `threshold` | `0.1` | 顶边进入滚动视口的 90% 高度线时触发；限制在 0–1 |
-| `trigger` | `scroll` | `scroll` 滚动触发一次，或 `mount` 挂载后播放 |
+| `trigger` | `scroll` | `scroll` 滚动触发，或 `mount` 挂载后播放 |
 | `disappearAfter` | `0` | 入场结束后等待多久退场；0 禁用 |
 | `disappearDuration` / `disappearEase` | `0.5` / `power3.in` | 退场时长和缓动 |
 
 React 的 `children` 对应默认插槽；回调对应 `@start`、`@complete` 和 `@disappearance-complete`。
-Vue 适配覆盖本次需求中的全部参数及官方 `trigger` / `onStart`；未移植新版额外的 blur、rotate、tilt、wipe、stagger、once 和 scrub 配置。
-未沿用原站专用的 `snap-main-container` 自动查找逻辑，自定义容器需明确传入。
+Vue 适配覆盖官方 JS/CSS 入口的全部动效参数；`once=false` 回滚出视口时反向播放，`scrub` 忽略入场延迟，只有 `once=true` 且关闭 `scrub` 时执行自动退场。
 系统减少动态效果设置可实时生效，恢复静态内容并跳过退场；键盘焦点进入组件时立即显示内容并取消退场。
 组件卸载、参数变化时清理自身动画、观察器和 ScrollTrigger。默认无隐藏 CSS，初始化前内容可读。
 
@@ -209,12 +217,10 @@ Vue 适配覆盖本次需求中的全部参数及官方 `trigger` / `onStart`；
 不需要 React、`@gsap/react`、shadcn 或新增样式框架。官方当前入口还包含 hover、loop、effect 等扩展；
 本项目只移植所需的逐字/词/行入场。版权与完整许可继续保留在 `frontend/public/licenses/react-bits-LICENSE.md`。
 
-覆盖用户批注的 25 处标题：主页 5 处、产品列表 1 处、工厂 4 处、关于我们 6 处、
-服务支持 5 处、业务咨询 3 处、加入我们 1 处；对应英文共用翻译绑定，自动接入。
-`PageHero.vue` 管理六个内页主标题，其余位置由视图显式使用组件，未批注的卡片标题保持原状。
+该组件保留供复用，当前页面不再使用。首页首屏标题为普通 h1，保留双语内容和换行，与其他页面一样由 AnimatedContent 整段入场。
 
 ```vue
-<SplitText tag="h2" id="products-title" :text="t('home.productsTitle')"
+<SplitText tag="h2" :text="title"
   :delay="50" :duration="1.25" ease="power3.out"
   :from="{ opacity: 0, y: 40 }" :to="{ opacity: 1, y: 0 }" />
 ```
@@ -229,11 +235,10 @@ Vue 适配覆盖本次需求中的全部参数及官方 `trigger` / `onStart`；
   `textAlign` 默认继承页面对齐，以保留左对齐和居中等原有布局。
 - 完成回调为 Vue 事件 `@letter-animation-complete`，每段文字完成一次。
 
-同一区块的文字与 AnimatedContent **共用触发时机、同步启动**，不等待父级动画结束或第二条滚动阈值；首屏文字与页面内容同步入场，
-不使用整页揭幕遮罩。`usePageMotion` 跳过拆分标题及其祖先的重复位移。
+如将 SplitText 嵌入 AnimatedContent，两者共用触发时机。当前首页内容区使用普通标题，避免叠加两层入场；首屏标题整段上移淡入，
+不使用整页揭幕遮罩。
 保留原 h1/h2/h3、换行、字号、间距和主题样式，英文保持整词换行，中文可按字换行。
 GSAP 提供完整标题的无障碍名称并隐藏片段的重复朗读；减少动态效果设置实时还原普通文本。
 语言和参数变化、卸载时清理旧动画及触发器；每次挂载播放一次，已完成标题不会因普通断点变化重播。
 
-`frontend/tests/split-text.spec.js` 验证 25 处双语覆盖、实际入场、移动端布局与换行、实时减少动态效果、
-语言切换、路由清理和文字/区块启动时间差；运行 `cd frontend && npm run test:e2e`。
+`frontend/tests/split-text.spec.js` 验证首页标题不拆分、双语切换、移动端换行、减少动态效果及路由清理；运行 `cd frontend && npm run test:e2e`。

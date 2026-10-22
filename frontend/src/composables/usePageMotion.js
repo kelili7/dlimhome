@@ -1,19 +1,6 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { gsap, ScrollTrigger, pageMounted } from '../motion/gsap'
-import { createPageParallax } from '../motion/pageParallax'
-import { motionTiming } from '../motion/settings'
-
-// Existing block reveals defer to explicitly animated text/content.
-const revealSelector = [
-  '.section-heading', '.two-columns > *', '.products-grid > *',
-  '.science-grid > *', '.guide-grid > *', '.carousel-layout > *',
-  '.company-facts > *', '.values-grid > *', '.process-grid > *',
-  '.company-markets > *', '.catalogue-heading', '.category-filters',
-  '.contact-path', '.enquiry-intro', '.workplace-heading',
-  '.workplace-gallery > *', '.benefits-layout > *', '.application-panel > *',
-  '.cta-panel > *',
-].join(',')
+import { ScrollTrigger, pageMounted } from '../motion/gsap'
 
 export function usePageMotion() {
   const motionRoot = ref(null)
@@ -37,124 +24,32 @@ export function usePageMotion() {
     }
     root.addEventListener('click', onAnchorClick)
     let frame
-    let context
-    // Keep playback history across responsive media-context rebuilds.
-    const revealed = new WeakSet()
-    let introPlayed = false
-    // Let the router restore scroll before measuring or revealing a page.
+    let timer
+    let resize
+    let mutation
+    let disposed = false
+    const refresh = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => { if (!disposed) ScrollTrigger.refresh() }, 100)
+    }
+    // Measure after Vue Router restores scroll. Observe layout only, not the
+    // inline transforms written by AnimatedContent on every animation frame.
     frame = requestAnimationFrame(() => {
       frame = requestAnimationFrame(() => {
-        context = gsap.context(() => {
-          const media = gsap.matchMedia()
-          media.add({ mobile: '(max-width: 767px)', desktop: '(min-width: 768px)',
-            // The enquiry photo is displayed only at this layout breakpoint.
-            wide: '(min-width: 1024px)',
-            reduce: '(prefers-reduced-motion: reduce)' }, mediaContext => {
-            const playIntro = !introPlayed
-            introPlayed = true
-            if (mediaContext.conditions.reduce) return
-            const mobile = mediaContext.conditions.mobile
-            const distance = mobile ? 10 : 16
-            const parallaxImages = createPageParallax(root, mobile)
-            const visible = element => {
-              const box = element.getBoundingClientRect()
-              return box.height > 0 && box.bottom > 0 && box.top < innerHeight
-            }
-            const hero = root.querySelector('.hero, .page-hero, .product-detail') || (root.matches('.not-found') ? root : null)
-            const copy = [...root.querySelectorAll('.hero-content > *, .page-hero > div > *, .product-detail .two-columns > *, .not-found > *')].filter(element => !element.closest('[data-animated-content], [data-split-text]') && visible(element))
-            // The route mask handles the reveal; do not dim visible content again.
-            if (playIntro && copy.length) {
-              gsap.timeline({ defaults: { duration: mobile ? motionTiming.introMobile : motionTiming.intro,
-                ease: 'dlim-reveal', clearProps: 'transform,willChange' } })
-                .from(copy, { y: distance, stagger: motionTiming.stagger, willChange: 'transform', force3D: false })
-            }
-
-            const seen = new WeakSet()
-            const triggers = new Set()
-            let refreshTimer
-            let disposed = false
-            mediaContext.add('reveal', elements => {
-              if (disposed) return
-              const targets = elements.filter(element => {
-                if (!element.isConnected || revealed.has(element)) return false
-                revealed.add(element)
-                if (element.contains(document.activeElement)) {
-                  gsap.set(element, { clearProps: 'transform,willChange' })
-                  return false
-                }
-                return true
-              })
-              if (!targets.length) return
-              gsap.to(targets, { y: 0, duration: mobile ? motionTiming.revealMobile : motionTiming.reveal,
-                stagger: motionTiming.stagger,
-                ease: 'dlim-reveal', willChange: 'transform', force3D: false,
-                clearProps: 'transform,willChange', overwrite: 'auto' })
-            })
-            mediaContext.add('scan', () => {
-              // Discard removed catalogue cards, and register only new blocks.
-              for (const trigger of triggers) {
-                if (!trigger.trigger.isConnected) { trigger.kill(); triggers.delete(trigger) }
-              }
-              const candidates = [...root.querySelectorAll(revealSelector)].filter(element => !element.closest('[data-animated-content], [data-split-text]') && !element.querySelector('[data-split-text]') && !hero?.contains(element) && !parallaxImages.has(element))
-              const candidatesSet = new Set(candidates)
-              const targets = candidates.filter(element => {
-                for (let parent = element.parentElement; parent && parent !== root; parent = parent.parentElement) {
-                  if (candidatesSet.has(parent)) return false
-                }
-                if (seen.has(element) || revealed.has(element)) return false
-                seen.add(element)
-                // A restored history position or a filter update should stay readable.
-                if (element.getBoundingClientRect().top < innerHeight) {
-                  revealed.add(element)
-                  return false
-                }
-                return true
-              })
-              if (targets.length) {
-                // Prepare ONLY below-screen elements, keeping full opacity. Once
-                // visible, they move to rest instead of jumping back to a start pose.
-                gsap.set(targets, { y: distance, force3D: false })
-                ScrollTrigger.batch(targets, {
-                  start: 'top bottom', once: true, interval: 0.03, batchMax: mobile ? 2 : 4,
-                  onEnter: mediaContext.reveal,
-                }).forEach(trigger => triggers.add(trigger))
-              }
-            })
-            const refresh = () => {
-              clearTimeout(refreshTimer)
-              refreshTimer = setTimeout(() => {
-                if (disposed) return
-                mediaContext.scan()
-                ScrollTrigger.refresh()
-              }, 100)
-            }
-            mediaContext.scan()
-            let previousSize = `${root.offsetWidth}:${root.offsetHeight}`
-            const resize = new ResizeObserver(() => {
-              const size = `${root.offsetWidth}:${root.offsetHeight}`
-              if (size !== previousSize) { previousSize = size; refresh() }
-            })
-            resize.observe(root)
-            const mutation = new MutationObserver(refresh)
-            mutation.observe(root, { childList: true, subtree: true })
-            // Reserved image dimensions need no refresh; actual height changes
-            // (including FAQ transitions) are picked up by ResizeObserver.
-            if (document.fonts.status !== 'loaded') {
-              document.fonts.ready.then(() => { if (!disposed) refresh() })
-            }
-            return () => {
-              disposed = true
-              clearTimeout(refreshTimer)
-              resize.disconnect()
-              mutation.disconnect()
-            }
-          }, root)
-        }, root)
+        if (disposed) return
+        resize = new ResizeObserver(refresh)
+        resize.observe(root)
+        mutation = new MutationObserver(refresh)
+        mutation.observe(root, { childList: true, subtree: true })
+        if (document.fonts.status !== 'loaded') document.fonts.ready.then(() => { if (!disposed) refresh() })
       })
     })
     cleanup = () => {
       cancelAnimationFrame(frame)
-      context?.revert()
+      disposed = true
+      clearTimeout(timer)
+      resize?.disconnect()
+      mutation?.disconnect()
       root.removeEventListener('click', onAnchorClick)
       unmark()
     }

@@ -1,4 +1,5 @@
 <script setup>
+import AnimatedContent from './AnimatedContent.vue'
 import { Gift, Package, ShoppingBag } from 'lucide-vue-next'
 import { useLocale } from '../composables/useLocale'
 
@@ -65,11 +66,11 @@ const formats = [
 <template>
   <section id="packaging" class="packaging-section section-space" aria-labelledby="packaging-title">
     <div class="container">
-      <div class="section-heading packaging-heading">
+      <AnimatedContent :stagger="0.08" class="section-heading packaging-heading">
         <h2 id="packaging-title">{{ tx(introduction.title) }}</h2>
         <p>{{ tx(introduction.copy) }}</p>
-      </div>
-      <div class="packaging-grid values-grid">
+      </AnimatedContent>
+      <AnimatedContent :stagger="0.08" class="packaging-grid values-grid">
         <article
           v-for="format in formats"
           :key="format.id"
@@ -96,7 +97,7 @@ const formats = [
             <p>{{ tx(format.copy) }}</p>
           </div>
         </article>
-      </div>
+      </AnimatedContent>
     </div>
   </section>
 </template>
