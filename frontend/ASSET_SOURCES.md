@@ -31,7 +31,7 @@
 | `gathering.jpg` | https://www.pexels.com/photo/ceramic-plates-on-the-table-7472695/ |
 | `dinnerware.jpg` | https://www.pexels.com/photo/ceramic-plates-on-the-table-6794583/ |
 
-[Pexels 使用条款](https://www.pexels.com/license/)。照片保持原始内容，通过 CSS 裁切或留白展示。旧版健康主题图片仍保留在 `public/images/` 根目录，本轮页面不再引用。
+[Pexels 使用条款](https://www.pexels.com/license/)。照片保持原始内容，通过 CSS 裁切或留白展示。旧版健康主题图片（`public/images/` 根目录中的 `botanical.jpg`、`care.jpg`、`fitness.jpg`、`ritual.jpg`、`skin.jpg`、`tubes.jpg`）已在确认无引用后移除；当前使用的 `public/images/ceramics/ritual.jpg` 保留。
 
 ## 品牌工作环境实拍
 

@@ -29,6 +29,8 @@ npm run test:e2e
 
 生产环境静态托管时需将页面路由回退至 `index.html`，以支持 Vue Router 的直接访问和刷新。
 
+未使用的 Vite 欢迎页 `HelloWorld.vue`、配套示例图片与图标，以及旧版健康主题图片已清理。`public/` 中的文件会原样进入构建产物；清理资源前须同时检查静态引用与动态路径（例如招聘页公司相册）。`SplitText.vue` 按原有约定保留供复用，当前页面不使用。
+
 ## 后续如何修改
 
 - **双语界面文案**：`src/data/messages.js`，对应 `en`、`zh` 两组相同字段。
