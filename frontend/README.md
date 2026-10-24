@@ -27,7 +27,11 @@ npm run test:e2e
 | `/contact` | Contact Us | 联系我们 | 店铺入口、零售/商业合作分流、本地询盘摘要 |
 | `/product/:handle` | Product collection | 产品系列详情 | 产品介绍、图片、特点、店铺入口与带产品上下文的咨询 |
 
-生产环境静态托管时需将页面路由回退至 `index.html`，以支持 Vue Router 的直接访问和刷新。
+GitHub Pages 部署使用 History 路由。Vite 构建会根据 GitHub 仓库名设置资源前缀，并在 `dist/404.html` 生成路由回退页，支持子页面直接访问和刷新；开发环境仍使用根路径。
+
+## GitHub Pages 部署
+
+仓库根目录的 `.github/workflows/deploy-frontend.yml` 会在 `main` 分支的前端代码更新后自动安装依赖、构建 `frontend/` 并发布 `frontend/dist/`。首次部署前，在 GitHub 仓库的 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。此仓库的项目站点地址为 `https://kelili7.github.io/dlimhome/`；构建会从 GitHub Actions 的仓库环境变量自动读取仓库名，因此无需在本地配置生产地址。
 
 未使用的 Vite 欢迎页 `HelloWorld.vue`、配套示例图片与图标，以及旧版健康主题图片已清理。`public/` 中的文件会原样进入构建产物；清理资源前须同时检查静态引用与动态路径（例如招聘页公司相册）。`SplitText.vue` 按原有约定保留供复用，当前页面不使用。
 

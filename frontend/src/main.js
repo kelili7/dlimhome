@@ -13,7 +13,7 @@ import JoinView from './views/JoinView.vue'
 import ProductView from './views/ProductView.vue'
 import NotFoundView from './views/NotFoundView.vue'
 const router = createRouter({
- history: createWebHistory(),
+ history: createWebHistory(import.meta.env.BASE_URL),
  routes: [
   { path: '/', component: HomeView, meta: { titleKey: 'nav.home' } },
   { path: '/products', component: ProductsView, meta: { titleKey: 'nav.products' } },

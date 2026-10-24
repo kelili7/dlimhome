@@ -609,4 +609,4 @@ figcaption { font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 
 
 /* Fill the homepage cards with their scene backgrounds. Detail galleries keep the full photos. */
 .products-section .product-card img.product-photograph { object-fit: cover; }
-.products-section .product-image-link[href="/product/heart-coffee-cups"] img { object-position: right center; }
+.products-section .product-image-link[href$="/product/heart-coffee-cups"] img { object-position: right center; }

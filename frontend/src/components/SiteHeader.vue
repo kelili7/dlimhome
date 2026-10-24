@@ -1,4 +1,5 @@
 <script setup>
+import { publicAsset } from '../utils/assets.js'
 import { ref, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { Menu, X, Languages, ChevronDown } from 'lucide-vue-next'
@@ -17,7 +18,7 @@ function closeOnLeave(event) { if (!event.currentTarget.contains(event.relatedTa
 <template>
 <header class="site-header" @keydown.esc="closeMenu">
  <div class="container navbar">
-  <RouterLink to="/" class="logo" aria-label="DLIM HOME"><img src="/images/brand/dlim-home.svg" alt="DLIM HOME" width="912" height="612" /></RouterLink>
+  <RouterLink to="/" class="logo" aria-label="DLIM HOME"><img :src="publicAsset('/images/brand/dlim-home.svg')" alt="DLIM HOME" width="912" height="612" /></RouterLink>
   <nav class="desktop-nav" :aria-label="t('nav.main')">
    <template v-for="link in navigation" :key="link.key">
     <RouterLink v-if="!link.children" class="primary-nav-item" :to="link.to">{{ t(`nav.${link.key}`) }}</RouterLink>

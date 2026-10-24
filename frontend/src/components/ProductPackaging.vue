@@ -1,4 +1,5 @@
 <script setup>
+import { publicAsset } from '../utils/assets.js'
 import AnimatedContent from './AnimatedContent.vue'
 import { Gift, Package, ShoppingBag } from 'lucide-vue-next'
 import { useLocale } from '../composables/useLocale'
@@ -15,7 +16,7 @@ const formats = [
   {
     id: 'gift',
     icon: Gift,
-    image: '/images/packaging/product-box.jpg',
+    image: publicAsset('/images/packaging/product-box.jpg'),
     width: 1536,
     height: 1024,
     title: { zh: '礼盒包装', en: 'Gift boxes' },
@@ -31,7 +32,7 @@ const formats = [
   {
     id: 'shipping',
     icon: Package,
-    image: '/images/packaging/shipping-box.jpg',
+    image: publicAsset('/images/packaging/shipping-box.jpg'),
     width: 1536,
     height: 1024,
     title: { zh: '运输包装', en: 'Shipping boxes' },
@@ -47,7 +48,7 @@ const formats = [
   {
     id: 'bag',
     icon: ShoppingBag,
-    image: '/images/packaging/shopping-bag.jpg',
+    image: publicAsset('/images/packaging/shopping-bag.jpg'),
     width: 1122,
     height: 1402,
     title: { zh: '手提袋', en: 'Shopping bags' },
