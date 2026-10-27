@@ -35,7 +35,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 .button, .gradient-button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius); font-size: 14px; font-weight: 500; line-height: 1.4; white-space: nowrap; }
 .button { padding: 14px 28px; border: 1px solid transparent; transition: opacity .2s; }
 .button:hover { opacity: .84; }
-.button-dark { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+.button-dark { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); transition: background-color .2s, border-color .2s; }
+.button-dark:hover { background: hsl(11 6% 24%); opacity: 1; }
 .gradient-button { padding: 2px; border: 0; background: linear-gradient(90deg, hsl(var(--gradient-blue)), hsl(var(--gradient-pink)), hsl(var(--gradient-coral)), hsl(var(--gradient-peach)), hsl(var(--gradient-pink)), hsl(var(--gradient-blue))); background-size: 200% 100%; }
 .gradient-button-inner { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; height: 100%; width: 100%; border-radius: inherit; background: hsl(var(--background)); padding: 12px 26px; }
 .gradient-button:hover { animation: gradient-shift .8s linear infinite; }
@@ -344,13 +345,15 @@ figcaption { font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 
 .site-footer .store-button { color: hsl(var(--card)); background: transparent; border-color: hsl(var(--card) / .3); font-size: 13px; }
 .footer-middle > p { font-size: 13px; color: hsl(var(--card) / .65); }
 .catalogue-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; }
-.catalogue-search { display: flex; align-items: center; gap: 12px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 14px 20px; width: 350px; }
+.catalogue-search { display: flex; align-items: center; gap: 12px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); padding: 6px 8px 6px 20px; width: 350px; }
 .catalogue-search svg { flex-shrink: 0; color: hsl(var(--muted-foreground)); }
 .catalogue-search input { border: 0; background: transparent; width: 100%; min-width: 0; font-size: 14px; }
+.catalogue-clear { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: hsl(var(--muted-foreground)); }
+.catalogue-clear:hover { background: hsl(var(--secondary)); color: hsl(var(--foreground)); }
 .category-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-block: 40px 24px; }
 .category-filters button { padding: 13px 24px; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: transparent; font-size: 14px; transition: background .2s, color .2s; }
 .category-filters button[aria-pressed=true] { background: hsl(var(--foreground)); border-color: hsl(var(--foreground)); color: hsl(var(--card)); }
-.catalogue-summary { display: flex; justify-content: space-between; gap: 24px; font-size: 13px; color: hsl(var(--muted-foreground)); margin-bottom: 32px; }
+.catalogue-summary { display: flex; gap: 24px; font-size: 13px; color: hsl(var(--muted-foreground)); margin-bottom: 32px; }
 .catalogue-grid { padding: 0; row-gap: 64px; }
 .empty-state { padding-block: 100px; text-align: center; }
 .empty-state h3 { font-size: 32px; margin-bottom: 16px; }

@@ -2,8 +2,11 @@ import { ref } from 'vue'
 import { messages } from '../data/messages'
 
 function initialLocale() {
-  try { return localStorage.getItem('dlim-locale') === 'zh' ? 'zh' : 'en' }
-  catch { return 'en' }
+  try {
+    const savedLocale = localStorage.getItem('dlim-locale')
+    return ['en', 'zh'].includes(savedLocale) ? savedLocale : 'zh'
+  }
+  catch { return 'zh' }
 }
 const locale = ref(initialLocale())
 

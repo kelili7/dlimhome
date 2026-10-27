@@ -24,3 +24,11 @@ frontend/dist/
 # Browser test output
 frontend/test-results/
 frontend/playwright-report/
+
+# Local-only project guide and Chinese project overview
+/AGENTS.md
+
+# Local design, brand-export, and canvas-editor files (keep their explanations locally)
+/design/**
+/output/**
+/canvas/**
